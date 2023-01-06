@@ -1,0 +1,423 @@
+<style scoped>
+.extra-margin {
+    padding-bottom: 80px;
+}
+</style>
+
+<template>
+
+    <PageWrapper 
+        title="My Profile" 
+        :directory="directory"
+    >
+        <CardWrapper
+            cardWidth="400px"
+            class="q-mb-md"
+            title="Credentials"
+            :allowHeader="true"
+            :allowActions="true"
+        >
+            <template #head>
+                <q-icon
+                    v-if="! $store.user.avatar"
+                    name="account_circle"
+                    class="col q-ma-md" 
+                    size="220px" 
+                />
+                <q-img
+                    v-else
+                    :src="$store.user.avatar"
+                    alt="userAvatar"
+                    class="col q-ma-xs"
+                />
+                <input
+                    type="file"
+                    name="image"
+                    ref="file"
+                    accept="image/*"
+                    @change="(event) => getImage(event)"
+                    hidden
+                />
+            </template>
+
+            <!-- Action -->
+            <template #actions>
+                <q-btn
+                    @click="$refs.file.click()" 
+                    flat 
+                    round 
+                    color="primary"
+                    icon="restart_alt" 
+                />
+                <q-btn 
+                    @click="removeImage()"
+                    flat 
+                    round 
+                    color="red" 
+                    icon="delete" 
+                />
+                <q-btn
+                    @click="saveAvatar()" 
+                    flat 
+                    round 
+                    color="secondary" 
+                    icon="save" />
+            </template>
+
+            <!-- Credentials -->
+            <p><b>ID:</b>&nbsp;{{ $store.user.id }}</p>
+            <p><b>Username:</b>&nbsp;{{ $store.user.name }}</p>
+            <p><b>Email:</b>&nbsp;{{ $store.user.email }}</p>
+            <p><b>Role:</b>&nbsp;{{ $store.access.role }}</p>
+        </CardWrapper>
+
+        <!-- Settings -->
+        <div class="card-profile">
+            <!-- UserName -->
+            <CardWrapper
+                cardWidth="400px"
+                class="q-mb-md"
+                title="Change Username"
+            >
+                <q-form
+                    @submit="submitUsername()"
+                    class="q-gutter-md q-mt-lg q-mb-lg"
+                >
+                    <q-input
+                        filled
+                        v-model="$store.user.name"
+                        label="Username"
+                    />
+
+                    <div class="row justify-end">
+                        <q-btn 
+                            :loading="loading['name']"
+                            label="Change name" 
+                            type="submit"
+                            color="primary"
+                        />
+                    </div>
+                </q-form>
+            </CardWrapper>
+
+            <!-- UserEmail -->
+            <CardWrapper
+                title="Transfer Account"
+                iconClass="info"
+                iconColor="orange"
+                cardWidth="400px"
+            >
+            <template #tooltip>
+                Be sure, entering the correct email. Otherwise, you have no access to your account
+            </template>
+                <q-form
+                    @submit="submitEmail()"
+                    class="q-gutter-md q-mt-lg q-mb-lg"
+                >
+                    <q-input
+                        filled
+                        v-model="$store.user.email"
+                        label="Current Owner"
+                    />
+
+                    <q-input
+                        filled
+                        type="password"
+                        v-model="emailPassword"
+                        label="Confirm by password"
+                    />
+
+                    <div class="row justify-end">
+                        <q-btn 
+                            :loading="loading['email']"
+                            label="Submit"
+                            type="submit" 
+                            color="primary"
+                        />
+                    </div>
+                </q-form>
+
+                <!-- Message -->
+                <BannerNote
+                    note="*After transfering your account, the email must be verified again. Be sure, entering the correct email. Otherwise, you have no access to your account"
+                />
+
+            </CardWrapper>
+        </div>
+
+        <!-- UserPassword -->
+        <CardWrapper
+            title="Change Password"
+            cardWidth="400px"
+        >
+            <q-form
+                @submit="submitPassword()"
+                class="q-gutter-md q-mt-lg q-mb-lg"
+            >
+                <q-input
+                    filled
+                    type="password"
+                    v-model="password.current"
+                    label="Confirm by password"
+                />
+                <!-- Password -->
+                <q-input
+                    filled
+                    type="password"
+                    v-model="password.new"
+                    label="Enter new password"
+                    bottom-slots
+                    class="extra-margin"
+                >
+                    <template v-slot:hint>
+                        <div>
+                            <p class="flex items-center align-center">
+                                <q-icon 
+                                    :name="passwordPattern.min_length.test(password.new) ? 'check_circle_outline' : 'highlight_off'" 
+                                    :color="passwordPattern.min_length.test(password.new) ? 'green' : 'orange'"
+                                />&nbsp;At least 7 characters
+                            </p>
+                            <p class="flex items-center align-center">
+                                <q-icon 
+                                    :name="passwordPattern.capital_letter.test(password.new) ? 'check_circle_outline' : 'highlight_off'" 
+                                    :color="passwordPattern.capital_letter.test(password.new) ? 'green' : 'orange'"
+                                />&nbsp;1 capital letter
+                            </p> 
+                            <p class="flex items-center align-center">
+                                <q-icon 
+                                    :name="passwordPattern.number.test(password.new) ? 'check_circle_outline' : 'highlight_off'" 
+                                    :color="passwordPattern.number.test(password.new) ? 'green' : 'orange'"
+                                />&nbsp;1 number
+                            </p>
+                        </div>
+                        
+                    </template>
+                </q-input>
+                <q-space class="xtra-space" />
+                <q-input
+                    filled
+                    type="password"
+                    v-model="password.confirm"
+                    label="Confirm new password"
+                />
+
+                <div class="row justify-end">
+                    <q-btn 
+                        :loading="loading['password']"
+                        label="Submit" 
+                        type="submit" 
+                        color="primary"
+                    />
+                </div>
+            </q-form>
+        </CardWrapper>
+
+        <!-- Delete Account -->
+        <CardWrapper
+            title="Delete Account"
+            iconClass="info"
+            iconColor="red"
+            cardWidth="400px"
+        >
+            <template #tooltip>
+                After deleting your account, all your data will be lost!
+            </template>
+
+            <q-form
+                @submit="deleteAccount()"
+                class="q-gutter-md q-mt-lg q-mb-lg"
+            >
+                <q-input
+                    filled
+                    type="password"
+                    v-model="deletePassword"
+                    label="Confirm by password"
+                />
+                <div class="row justify-end">
+                    <q-btn 
+                        :loading="loading['delete']"
+                        label="Confirm"
+                        type="submit" 
+                        color="red"
+                    />
+                </div>
+            </q-form>
+
+            <!-- Message -->
+            <BannerNote
+                note="*After deleting, all of your data is removed form our system.  "
+            />
+        </CardWrapper>
+    </PageWrapper>
+
+</template>
+
+<script>
+import { ref } from 'vue';
+import PageWrapper from 'components/PageWrapper.vue';
+import CardWrapper from 'components/CardWrapper.vue';
+import BannerNote from 'src/components/BannerNote.vue';
+import { passwordRequirements, regRules } from 'src/modules/globals.js';
+import { changeAvatar, changeName, changeEmailRequest, changePassword, deleteUser } from 'src/apis/auth.js';
+
+export default {
+    name: 'UserAccountSettings',
+    components: {
+        PageWrapper, CardWrapper, BannerNote
+    },
+    
+    emits: [
+        'logout'
+    ],
+
+    setup() {
+        return {
+            errorMessage: '',
+            passwordPattern: regRules.passwordPattern,
+            regRulesEmail: regRules.email,
+            loading: ref({
+                'name': false,
+                'email': false,
+                'password': false,
+                'delete': false
+            }),
+            directory: [{
+                label: 'Home',
+                redirect: '/dashboard'
+            }, {
+                label: 'My Profile',
+                redirect: '/my-account'
+            }],
+        };
+    },
+    data() {
+        return {
+            imageSize: 2000000,
+            // Data
+            userAvatar: {
+                image: null,
+                deleteAvatar: false,
+            },
+            password: {
+                current: '',
+                new: '',
+                confirm: '',
+            },
+            emailPassword: '',
+            deletePassword: ''
+        };
+    },
+    methods: {
+        /*
+         * Credentials
+         */
+        async submitUsername() {
+            try {
+                if(this.$store.user.name.length === 0) throw ('Please enter name.');
+                this.loading['name'] = this.$toast.load();
+                const response = await changeName(this.$store.user.name);
+                this.$toast.success(response.data.message);
+            } catch (error) {
+                const errorMessage = error.response ? error.response : error;
+                this.$toast.error(errorMessage);
+            } finally {
+                this.loading['name'] = false;
+            }
+        },
+        
+        async submitEmail() {
+            try {
+                if(!this.regRulesEmail.test(this.$store.user.email)) throw ('Please enter valid email.');
+                if(!this.emailPassword) return;
+                this.loading['email'] = this.$toast.load();
+                const response = await changeEmailRequest(this.$store.user.email, this.emailPassword);
+                this.$toast.success(response.data.message)
+            } catch (error) {
+                const errorMessage = error.response ? error.response : error;
+                this.$toast.error(errorMessage);
+            } finally {
+                this.loading['email'] = false;
+                this.emailPassword = '';
+            }
+        },
+
+        async submitPassword() {
+            try {
+                this.loading['password'] = this.$toast.load();
+                passwordRequirements(this.password.new);
+                const response = await changePassword(this.password.current, this.password.new, this.password.confirm)
+                this.$toast.success(response.data.message)
+            } catch (error) {
+                const errorMessage = error.response ? error.response : error;
+                this.message = this.$toast.error(errorMessage);
+            } finally {
+                this.loading['password'] = false;
+                this.password.current = '';
+                this.password.new = '';
+                this.password.confirm = '';
+            }
+        },
+        
+        async deleteAccount() {
+            try {
+                this.loading['delete'] = this.$toast.load();
+                const response = await deleteUser(this.deletePassword);
+                this.$emit('logout', response.data.message);
+                this.$router.push('/');
+            } catch (error) {
+                const errorMessage = error.response ? error.response : error;
+                this.$toast.error(errorMessage);
+            } finally {
+                this.loading['delete'] = false;
+            }
+        },
+
+        /*
+         * User Avatar
+         */
+        async saveAvatar() {
+            if(this.loading) return;
+            if(!this.userAvatar.image && !this.userAvatar.deleteAvatar ) return;
+            try {
+                // Upload Image
+                const formData = new FormData;
+                // formData.append('delete', this.userAvatar.deleteAvatar)
+                formData.append("avatar", this.userAvatar.image);
+                formData.append("delete", this.userAvatar.deleteAvatar ? '1' : '0');
+                this.loading = this.$toast.load();
+                const response = await changeAvatar(formData);
+                this.$toast.success(response.data.message);
+                this.userAvatar.image = null;
+                this.userAvatar.deleteAvatar = false;
+            } catch (error) {
+                const errorMessage = error.response ? error.response : error;
+                this.$toast.error(errorMessage);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        getImage(event) {
+            const imageSize = this.imageSize;
+            this.userAvatar.image = event.target.files[0];
+            if ( this.userAvatar.image.size > imageSize) {
+                this.$toast.error('Ups, the size is bigger than ' + imageSize / 1000000 + ' MB')
+            } else {
+                let reader = new FileReader();
+                reader.readAsDataURL( this.userAvatar.image);
+                reader.onload = (e) => {
+                    this.$store.user.avatar = e.target.result;
+                    this.userAvatar.deleteAvatar = false;
+                };
+            }
+        },
+
+        removeImage() {
+            this.userAvatar.deleteAvatar = true;
+            this.userAvatar.image = '';
+            this.$store.user.avatar = '';
+            this.$refs.file.value = '';
+        },
+    }
+};
+</script>

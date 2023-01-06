@@ -1,0 +1,68 @@
+#app-header {
+    z-index: 9998;
+}
+
+.border-left {
+    border-left-style: solid;
+}
+
+.bg-primal-blue {
+    background-color: rgb(51, 48, 214);
+}
+
+.background {
+    background-color: $primary;
+}
+
+.background-dark {
+    background-color: rgba(240, 240, 240, 0.1);
+}
+
+/*
+ * Quasar - Components
+ */
+.q-drawer {
+    z-index: 9999 !important;
+}
+
+.toaster-container {
+    margin-top: 82px;
+}
+
+.q-fab__actions {
+    margin-top: 13px;
+}
+
+/*
+ * Helpers
+ */
+._text-break {
+    word-break: break-all;
+    overflow: auto;
+    white-space: pre-wrap;
+}
+
+._overflow-hidden {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/*
+ * Default Classes
+ */
+.default-link {
+    text-decoration: none;
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.m-0 {
+    margin: 0;
+}
+
+.w-100 {
+    width: 100%;
+}
