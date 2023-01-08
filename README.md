@@ -1,5 +1,10 @@
 # Read me
 Gigup-Solution - v1.0.1 / 08.01.2023
+by Carlson
+
+## Current Bugs: 08.01.2023
+ 1. Auth System: Transfer Account (simple?)
+ 2. Avatar Path to Server: CORS error
 
 ## Requirements
  - php 8.1
