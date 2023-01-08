@@ -24,7 +24,7 @@ class UserAuthController extends Controller
         $user = Auth::user();
 
         $avatarPath = $user->avatar
-            ? asset(public_path('avatar') . $user->avatar)
+            ? asset(public_path('avatar') . '/' . $user->avatar)
             : '';
         
         return response()->json([

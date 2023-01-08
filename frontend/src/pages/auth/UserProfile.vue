@@ -12,7 +12,7 @@
     >
         <CardWrapper
             cardWidth="400px"
-            class="q-mb-md"
+            class="q-ma-sm"
             title="Credentials"
             :allowHeader="true"
             :allowActions="true"
@@ -71,84 +71,84 @@
             <p><b>Role:</b>&nbsp;{{ $store.access.role }}</p>
         </CardWrapper>
 
-        <!-- Settings -->
-        <div class="card-profile">
-            <!-- UserName -->
-            <CardWrapper
-                cardWidth="400px"
-                class="q-mb-md"
-                title="Change Username"
+        <!-- UserName -->
+        <CardWrapper
+            cardWidth="400px"
+            class="q-ma-sm"
+            title="Change Username"
+        >
+            <q-form
+                @submit="submitUsername()"
+                class="q-gutter-md q-mt-lg q-mb-lg"
             >
-                <q-form
-                    @submit="submitUsername()"
-                    class="q-gutter-md q-mt-lg q-mb-lg"
-                >
-                    <q-input
-                        filled
-                        v-model="$store.user.name"
-                        label="Username"
-                    />
-
-                    <div class="row justify-end">
-                        <q-btn 
-                            :loading="loading['name']"
-                            label="Change name" 
-                            type="submit"
-                            color="primary"
-                        />
-                    </div>
-                </q-form>
-            </CardWrapper>
-
-            <!-- UserEmail -->
-            <CardWrapper
-                title="Transfer Account"
-                iconClass="info"
-                iconColor="orange"
-                cardWidth="400px"
-            >
-            <template #tooltip>
-                Be sure, entering the correct email. Otherwise, you have no access to your account
-            </template>
-                <q-form
-                    @submit="submitEmail()"
-                    class="q-gutter-md q-mt-lg q-mb-lg"
-                >
-                    <q-input
-                        filled
-                        v-model="$store.user.email"
-                        label="Current Owner"
-                    />
-
-                    <q-input
-                        filled
-                        type="password"
-                        v-model="emailPassword"
-                        label="Confirm by password"
-                    />
-
-                    <div class="row justify-end">
-                        <q-btn 
-                            :loading="loading['email']"
-                            label="Submit"
-                            type="submit" 
-                            color="primary"
-                        />
-                    </div>
-                </q-form>
-
-                <!-- Message -->
-                <BannerNote
-                    note="*After transfering your account, the email must be verified again. Be sure, entering the correct email. Otherwise, you have no access to your account"
+                <q-input
+                    filled
+                    v-model="$store.user.name"
+                    label="Username"
                 />
 
-            </CardWrapper>
-        </div>
+                <div class="row justify-end">
+                    <q-btn 
+                        :loading="loading['name']"
+                        label="Change name" 
+                        type="submit"
+                        color="primary"
+                    />
+                </div>
+            </q-form>
+        </CardWrapper>
+
+        <!-- UserEmail -->
+        <CardWrapper
+            title="Transfer Account"
+            iconClass="info"
+            iconColor="orange"
+            class="q-ma-sm"
+            cardWidth="400px"
+        >
+        <template #tooltip>
+            Be sure, entering the correct email. Otherwise, you have no access to your account
+        </template>
+            <q-form
+                @submit="submitEmail()"
+                class="q-gutter-md q-mt-lg q-mb-lg"
+            >
+                <q-input
+                    filled
+                    v-model="$store.user.email"
+                    label="Current Owner"
+                />
+
+                <q-input
+                    filled
+                    type="password"
+                    v-model="emailPassword"
+                    label="Confirm by password"
+                />
+
+                <div class="row justify-end">
+                    <q-btn 
+                        :loading="loading['email']"
+                        label="Submit"
+                        type="submit" 
+                        color="primary"
+                    />
+                </div>
+            </q-form>
+
+            <!-- Message -->
+            <BannerNote
+                note="*After changing the email successfully, you will receivethe transfered account must be verified again.
+                the email must be verified again. Be sure, entering the correct email. Otherwise, you have no access to your account"
+            />
+        </CardWrapper>
+        
 
         <!-- UserPassword -->
         <CardWrapper
             title="Change Password"
             cardWidth="400px"
+            class="q-ma-sm"
         >
             <q-form
                 @submit="submitPassword()"
@@ -218,6 +218,7 @@
             iconClass="info"
             iconColor="red"
             cardWidth="400px"
+            class="q-ma-sm"
         >
             <template #tooltip>
                 After deleting your account, all your data will be lost!
@@ -279,7 +280,8 @@ export default {
                 'name': false,
                 'email': false,
                 'password': false,
-                'delete': false
+                'delete': false,
+                'avatar': false
             }),
             directory: [{
                 label: 'Home',
@@ -312,6 +314,7 @@ export default {
          * Credentials
          */
         async submitUsername() {
+            console.log('PathAvatar', this.$store.user.avatar)
             try {
                 if(this.$store.user.name.length === 0) throw ('Please enter name.');
                 this.loading['name'] = this.$toast.load();
@@ -376,15 +379,15 @@ export default {
          * User Avatar
          */
         async saveAvatar() {
-            if(this.loading) return;
+            if(this.loading['avatar']) return;
             if(!this.userAvatar.image && !this.userAvatar.deleteAvatar ) return;
             try {
+                console.log('Avarar')
                 // Upload Image
                 const formData = new FormData;
-                // formData.append('delete', this.userAvatar.deleteAvatar)
                 formData.append("avatar", this.userAvatar.image);
                 formData.append("delete", this.userAvatar.deleteAvatar ? '1' : '0');
-                this.loading = this.$toast.load();
+                this.loading['avatar'] = this.$toast.load();
                 const response = await changeAvatar(formData);
                 this.$toast.success(response.data.message);
                 this.userAvatar.image = null;
@@ -393,7 +396,7 @@ export default {
                 const errorMessage = error.response ? error.response : error;
                 this.$toast.error(errorMessage);
             } finally {
-                this.loading = false;
+                this.loading['avatar'] = false;
             }
         },
 
