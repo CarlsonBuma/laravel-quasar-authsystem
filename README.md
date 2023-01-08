@@ -1,5 +1,5 @@
 # Read me
-Gigup-Solution - v1.0.0 / 06.01.2023
+Gigup-Solution - v1.0.0 / 08.01.2023
 
 ## Requirements
  > php 8.1
@@ -12,18 +12,16 @@ Gigup-Solution - v1.0.0 / 06.01.2023
  > powershell
 
 ## Infrastructure
+ > .docker:
+     > Docker images
+          > MySql
+          > PSQL  
  > backend: 
      > Laravel v9 - PHP 8.1
  > frontend: 
      > Vue.js        - Node 18.7.0
-     > Quasar        - Framework 1.3.2
+     > Quasar        - Vue - Framework 1.3.2
      > Axios         - API Requests
- > database: MySQL 
-     > Docker Container
-
-## Shortcuts
- > Root:
-     > Starting environement: env-start.ps1
-          > Run PHP artisan serve
-          > Run Quasar dev
-          > Run Docker - MySQL
+ > root:
+     > env-start.ps1 - start environement
+     > env-end.ps1 - stop environment
