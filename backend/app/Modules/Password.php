@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Globals;
+namespace App\Modules;
 
 class Password
 {

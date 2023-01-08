@@ -4,7 +4,7 @@ namespace App\Actions\Auth;
 
 use Exception;
 use App\Models\User;
-use App\Globals\Modulate;
+use App\Modules\Modulate;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;
@@ -14,14 +14,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
-class VerifyEmailController extends Controller
+class EmailVerificationController extends Controller
 {
     /**
-     ** Request Transfer Email
+     * ** Request Transfer Email
      **  > Generate URL, with Token 
      **  > Send verification link to new email
      *
-     * @param Request $request
+     * @param User $user
+     * @param String $newEmail
      * @return void
      */
     public function emailTransferRequest(User $user, String $newEmail)
@@ -61,7 +62,7 @@ class VerifyEmailController extends Controller
      * @param Request $request
      * @return void
      */
-    public function transferEmail(String $email, String $token, String $transfer, Request $request)
+    public function accountTransfer(String $email, String $token, String $transfer, Request $request)
     {
         try {
 
@@ -168,7 +169,6 @@ class VerifyEmailController extends Controller
     public function confirmEmailLink(String $email, String $token, Request $request)
     {      
         try {
-            
             // Validate Signature
             if (!$request->hasValidSignature()) {
                 throw new Exception('Link has been expired.');
@@ -180,13 +180,19 @@ class VerifyEmailController extends Controller
             ])->first();
 
             if(!$user) throw new Exception('No valid verification key.');
-            else if ($user->email_verified_at) throw new Exception('Email is already verified.');
             else if(!$user->email) throw new Exception('No valid verification key.');
             else if(sha1($user->email) !== $token) throw new Exception('No valid verification key.');
+            else if ($user->email_verified_at) throw new Exception('Email is already verified.');
             
             if(!$user->email_verified_at) {
+                // Verify
                 $user->email_verified_at = now();
                 $user->save();
+
+                // Reset Password - Reset - Request
+                // As it could be set in TransferAccount
+                $passwordRequest = PasswordReset::where('email', $user->email)->first();
+                if($passwordRequest) $passwordRequest->delete();
             }
         } catch (Exception $e) {
             return response()->json([

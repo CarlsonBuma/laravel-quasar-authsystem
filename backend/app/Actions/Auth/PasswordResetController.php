@@ -4,8 +4,8 @@ namespace App\Actions\Auth;
 
 use Exception;
 use App\Models\User;
-use App\Globals\Modulate;
-use App\Globals\Password;
+use App\Modules\Modulate;
+use App\Modules\Password;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;

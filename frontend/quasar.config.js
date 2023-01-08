@@ -53,7 +53,6 @@ module.exports = configure(function (/* ctx */) {
 
         devServer: {
             // https: true,
-            // proxy: 'http://127.0.0.1:8000/',
             open: true
         },
 

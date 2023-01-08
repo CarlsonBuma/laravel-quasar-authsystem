@@ -4,16 +4,15 @@ namespace App\Actions\Auth;
 
 use Exception;
 use App\Models\User;
-use App\Globals\Password;
+use App\Modules\Password;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Actions\Auth\UserAuthController;
-use App\Actions\Auth\VerifyEmailController;
+use App\Actions\Auth\EmailVerificationController;
 
 class UserProfileController extends Controller
 {
@@ -59,7 +58,7 @@ class UserProfileController extends Controller
                     $imageName = $userID . '-' . Str::random(32) . '.' . $fileExtension;
                 
                     // Change Image
-                    if($userAvatar)   Storage::disk('avatars')->delete($userAvatar);       
+                    if($userAvatar) Storage::disk('avatars')->delete($userAvatar);       
                     Storage::putFileAs('avatars', $request->file('avatar'), $imageName);
                     
                     // Save in DB
@@ -99,7 +98,6 @@ class UserProfileController extends Controller
             ]);
 
         } catch (Exception $e) {
-            DB::rollBack();
             return response()->json([
                 'message' => $e->getMessage(),
             ], 422);
@@ -179,15 +177,22 @@ class UserProfileController extends Controller
             $user = Auth::user();
             if(!Hash::check($password, $user->password)) throw new Exception('Ups, the given password is incorrect.');
             
-            $verificationMail = new VerifyEmailController;
-            $verificationMail->emailTransferVerification($user, $newEmail);
+            $verificationMail = new EmailVerificationController;
+            $verificationMail->emailTransferRequest($user, $newEmail);
+
+            $userAccount = User::where('id', Auth::id())->first();
+            $userAccount->email_verified_at = null;
+            $userAccount->save();
 
         } catch (Exception $e) {
-            DB::rollBack();
             return response()->json([
                 'message' => $e->getMessage(),
             ], 422);
         }
+
+        // Logout
+        $userLog = new UserAuthController;
+        $userLog->logoutUser($request);
 
         return response()->json([
             'message' => 'The account has been transfered. The verification key has been sent to the new mail.',

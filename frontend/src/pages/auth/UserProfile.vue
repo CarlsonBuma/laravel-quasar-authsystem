@@ -77,25 +77,19 @@
             class="q-ma-sm"
             title="Change Username"
         >
-            <q-form
+            <FormWrapper
+                buttonText="Change name"
+                buttonIcon="person"
+                :loading="loading['name']"
                 @submit="submitUsername()"
-                class="q-gutter-md q-mt-lg q-mb-lg"
             >
                 <q-input
                     filled
                     v-model="$store.user.name"
                     label="Username"
                 />
-
-                <div class="row justify-end">
-                    <q-btn 
-                        :loading="loading['name']"
-                        label="Change name" 
-                        type="submit"
-                        color="primary"
-                    />
-                </div>
-            </q-form>
+            </FormWrapper>
+           
         </CardWrapper>
 
         <!-- UserEmail -->
@@ -106,17 +100,28 @@
             class="q-ma-sm"
             cardWidth="400px"
         >
-        <template #tooltip>
-            Be sure, entering the correct email. Otherwise, you have no access to your account
-        </template>
-            <q-form
+            <template #tooltip>
+                Make sure to change the password, so the new owner is able to login.
+            </template>
+
+            <FormWrapper
+                buttonText="Change email"
+                buttonIcon="email"
+                :loading="loading['email']"
                 @submit="submitEmail()"
-                class="q-gutter-md q-mt-lg q-mb-lg"
             >
                 <q-input
                     filled
+                    disable
                     v-model="$store.user.email"
                     label="Current Owner"
+                />
+
+                <q-input
+                    filled
+                    v-model="transferEmail"
+                    label="Transfer Owner"
+                    placeholder="Enter email"
                 />
 
                 <q-input
@@ -125,21 +130,13 @@
                     v-model="emailPassword"
                     label="Confirm by password"
                 />
-
-                <div class="row justify-end">
-                    <q-btn 
-                        :loading="loading['email']"
-                        label="Submit"
-                        type="submit" 
-                        color="primary"
-                    />
-                </div>
-            </q-form>
+            </FormWrapper>
 
             <!-- Message -->
             <BannerNote
-                note="*After changing the email successfully, you will receivethe transfered account must be verified again.
-                the email must be verified again. Be sure, entering the correct email. Otherwise, you have no access to your account"
+                note="*Meanwhile the transfer is in progress, the new owner must verify it's email by the verification - link sent to him. 
+                    In case of undo your transfer, you can verify your old email again, by login with your old credentials.
+                    This is available until the new owner verifies his account."
             />
         </CardWrapper>
         
@@ -150,9 +147,11 @@
             cardWidth="400px"
             class="q-ma-sm"
         >
-            <q-form
+            <FormWrapper
+                buttonText="Change password"
+                buttonIcon="password"
+                :loading="loading['password']"
                 @submit="submitPassword()"
-                class="q-gutter-md q-mt-lg q-mb-lg"
             >
                 <q-input
                     filled
@@ -200,16 +199,7 @@
                     v-model="password.confirm"
                     label="Confirm new password"
                 />
-
-                <div class="row justify-end">
-                    <q-btn 
-                        :loading="loading['password']"
-                        label="Submit" 
-                        type="submit" 
-                        color="primary"
-                    />
-                </div>
-            </q-form>
+            </FormWrapper>
         </CardWrapper>
 
         <!-- Delete Account -->
@@ -224,9 +214,12 @@
                 After deleting your account, all your data will be lost!
             </template>
 
-            <q-form
+            <FormWrapper
+                buttonText="Delete account"
+                buttonIcon="delete"
+                buttonColor="red"
+                :loading="loading['delete']"
                 @submit="deleteAccount()"
-                class="q-gutter-md q-mt-lg q-mb-lg"
             >
                 <q-input
                     filled
@@ -234,15 +227,7 @@
                     v-model="deletePassword"
                     label="Confirm by password"
                 />
-                <div class="row justify-end">
-                    <q-btn 
-                        :loading="loading['delete']"
-                        label="Confirm"
-                        type="submit" 
-                        color="red"
-                    />
-                </div>
-            </q-form>
+            </FormWrapper>
 
             <!-- Message -->
             <BannerNote
@@ -258,13 +243,14 @@ import { ref } from 'vue';
 import PageWrapper from 'components/PageWrapper.vue';
 import CardWrapper from 'components/CardWrapper.vue';
 import BannerNote from 'src/components/BannerNote.vue';
+import FormWrapper from 'components/FormWrapper.vue';
 import { passwordRequirements, regRules } from 'src/modules/globals.js';
 import { changeAvatar, changeName, changeEmailRequest, changePassword, deleteUser } from 'src/apis/auth.js';
 
 export default {
     name: 'UserAccountSettings',
     components: {
-        PageWrapper, CardWrapper, BannerNote
+        PageWrapper, CardWrapper, BannerNote, FormWrapper
     },
     
     emits: [
@@ -305,6 +291,7 @@ export default {
                 new: '',
                 confirm: '',
             },
+            transferEmail: '',
             emailPassword: '',
             deletePassword: ''
         };
@@ -330,10 +317,10 @@ export default {
         
         async submitEmail() {
             try {
-                if(!this.regRulesEmail.test(this.$store.user.email)) throw ('Please enter valid email.');
+                if(!this.regRulesEmail.test(this.transferEmail)) throw ('Please enter valid email.');
                 if(!this.emailPassword) return;
                 this.loading['email'] = this.$toast.load();
-                const response = await changeEmailRequest(this.$store.user.email, this.emailPassword);
+                const response = await changeEmailRequest(this.transferEmail, this.emailPassword);
                 this.$toast.success(response.data.message)
             } catch (error) {
                 const errorMessage = error.response ? error.response : error;

@@ -47,12 +47,10 @@ const routesAuth = [
         name: "UserProfile",
         component: () => import('src/pages/auth/UserProfile.vue'),
         beforeEnter: (to, from, next) => {
-            if (!store().access.logged) next({ name: "Login" });
+            if (!store().access.logged) next('/');
             else next();
         },
     },
-
-    
 ];
 
 export default routesAuth;

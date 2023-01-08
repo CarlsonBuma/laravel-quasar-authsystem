@@ -4,7 +4,7 @@ namespace App\Actions\Auth;
 
 use Exception;
 use App\Models\User;
-use App\Globals\Password;
+use App\Modules\Password;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;

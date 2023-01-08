@@ -65,9 +65,7 @@ Route::put('/password-reset/{email}/{token}', [PasswordResetController::class, '
  */
 
 // Verify new email adress, with current account
-Route::get('/user-transfer-verification/{email}/{token}/{transfer}', [EmailVerificationController::class, 'transferEmail'])
-    ->middleware(['throttle:6,1'])
-    ->name('user.transfer.verification');
+
 
 // AUTHENTICATED
 Route::middleware(['auth:sanctum', 'email_verified'])->group(function () {
@@ -81,10 +79,14 @@ Route::middleware(['auth:sanctum', 'email_verified'])->group(function () {
         ->name('user.change.password');
     
     // Email Transfer Request - Validate before updating new email
-    Route::post('/user-transfer-request', [UserProfileController::class, 'emailTransferRequest'])
+    Route::post('/user-transfer-request', [UserProfileController::class, 'accountTransferRequest'])
         ->name('user.transfer.request');
+    Route::get('/user-transfer-verification/{email}/{token}/{transfer}', [EmailVerificationController::class, 'accountTransfer'])
+        ->withoutMiddleware(['auth:sanctum', 'email_verified'])
+        ->middleware(['throttle:6,1'])
+        ->name('user.transfer.verification');
     
-        // Delete User
+    // Delete User
     Route::post('/user-delete-account', [UserProfileController::class, 'deleteAccount'])
         ->name('user.delete.account');
 });
