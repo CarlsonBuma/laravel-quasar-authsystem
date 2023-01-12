@@ -10,62 +10,62 @@
 
 <template>
 
-    <!-- Entity Drawer -->
-    <q-drawer
-        side="right"
-        v-model="drawerRightEntity"
-        bordered
-        overlay
-        :width="250"
-        :breakpoint="500"
-        elevated
-      >
-        <q-scroll-area class="fit">
-            <q-btn color="orange" class="shadow w-100" square icon="close" @click="{
-                drawerRightEntity = false;
-                drawerRightRequirements = false;    
-            }" />
-            <div class="q-pa-sm">
-                <div class="text-h6 q-ma-md">Entity details</div>
-                <q-separator class="q-mt-md q-mb-md"/>
-
-                <!-- Entity Details -->
-
-            </div>
-        </q-scroll-area>
-    </q-drawer>
-
-    <!-- Entity Drawer -->
-    <q-drawer
-        side="right"
-        v-model="drawerRightRequirements"
-        bordered
-        overlay
-        :width="250"
-        :breakpoint="500"
-        elevated
-      >
-        <q-scroll-area class="fit">
-            <q-btn color="orange" class="shadow w-100" icon="close" @click="{
-                drawerRightEntity = false;
-                drawerRightRequirements = false;    
-            }"
-        />
-            <div class="q-pa-sm">
-                <div class="text-h6 q-ma-md">Progress details</div>
-                <q-separator class="q-mt-md q-mb-md"/>
-
-                <!-- Gig Details -->
-                <div><b>Progress:</b></div>
-                <div>Here comes Progress</div>
-                <q-separator class="q-ma-sm"></q-separator>
-                <div><b>Requirements:</b></div>
-                <div>Requirements by Progress</div>
-            </div>
-        </q-scroll-area>
-    </q-drawer>
-
     <PageWrapper title="EventBox" subtitle="Meet &amp; Greet.">
+
+        <!-- Entity Drawer -->
+        <q-drawer
+            side="right"
+            v-model="drawerRightEntity"
+            bordered
+            overlay
+            :width="250"
+            :breakpoint="500"
+            elevated
+        >
+            <q-scroll-area class="fit">
+                <q-btn color="orange" class="shadow w-100" square icon="close" @click="{
+                    drawerRightEntity = false;
+                    drawerRightRequirements = false;    
+                }" />
+                <div class="q-pa-sm">
+                    <div class="text-h6 q-ma-md">Entity details</div>
+                    <q-separator class="q-mt-md q-mb-md"/>
+
+                    <!-- Entity Details -->
+
+                </div>
+            </q-scroll-area>
+        </q-drawer>
+
+        <!-- Entity Drawer -->
+        <q-drawer
+            side="right"
+            v-model="drawerRightRequirements"
+            bordered
+            overlay
+            :width="250"
+            :breakpoint="500"
+            elevated
+        >
+            <q-scroll-area class="fit">
+                <q-btn color="orange" class="shadow w-100" icon="close" @click="{
+                    drawerRightEntity = false;
+                    drawerRightRequirements = false;    
+                }"
+            />
+                <div class="q-pa-sm">
+                    <div class="text-h6 q-ma-md">Progress details</div>
+                    <q-separator class="q-mt-md q-mb-md"/>
+
+                    <!-- Gig Details -->
+                    <div><b>Progress:</b></div>
+                    <div>Here comes Progress</div>
+                    <q-separator class="q-ma-sm"></q-separator>
+                    <div><b>Requirements:</b></div>
+                    <div>Requirements by Progress</div>
+                </div>
+            </q-scroll-area>
+        </q-drawer>
 
         <!-- Overview -->
         <template #actions>

@@ -75,6 +75,7 @@ class EmailVerificationController extends Controller
             if(!$verifiedToken) throw new Exception('No valid verification key.');
             if (!Hash::check($token, $verifiedToken->token)) throw new Exception('No valid verification key.');
             if(User::where('email', $transfer)->exists()) throw new Exception('Ups, the new email is already taken.');
+            $verifiedToken->delete();
 
             // Change email
             $user = User::where([
@@ -83,14 +84,12 @@ class EmailVerificationController extends Controller
 
             
             if(!$user) throw new Exception('This user does not exist anymore.');
+            if($user->email_verified_at) throw new Exception('This user is verified.');
 
             $user->email = $transfer;
             $user->email_verified_at = now();
             $user->remember_token = null;
             $user->save();
-
-            // Remove PasswordReset Entry
-            $verifiedToken->delete();
 
         } catch (Exception $e) {
             return response()->json([

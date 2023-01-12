@@ -1,76 +1,78 @@
 <!-- Gigup Design - 06.01.2023, v.0.0.1 -->
 <template>    
 
-    <!-- Design -->
-    <div id="app-design"></div>
+    <div id="app-wrapper">
+        <!-- Design -->
+        <div id="app-design"></div>
 
-    <!-- Layout: hHh lpr fff, lHh lpr fff -->
-    <q-layout view="lHh Lpr lff">
-        
-        <!-- Top -->
-        <q-header 
-            id="app-header"
-            elevated
-            :class="{
-                'bg-dark': $q.dark.isActive,
-                'bg-white': !$q.dark.isActive,
-                'text-white': $q.dark.isActive,
-                'text-dark': !$q.dark.isActive,
-            }">
-            <NavTopGuest
+        <!-- Layout: hHh lpr fff, lHh lpr fff -->
+        <q-layout view="lHh Lpr lff">
+            
+            <!-- Top -->
+            <q-header 
+                id="app-header"
+                elevated
+                :class="{
+                    'bg-dark': $q.dark.isActive,
+                    'bg-white': !$q.dark.isActive,
+                    'text-white': $q.dark.isActive,
+                    'text-dark': !$q.dark.isActive,
+                }">
+                <NavTopGuest
+                    v-if="!$store.access.logged"
+                    :allowSubNav="true"
+                    :allowLeftDrawer="false"
+                    @drawerLeft="expandDrawerLeft = !expandDrawerLeft"
+                    @login="authUser()" 
+                />
+                <NavTopUser
+                    v-else-if="$store.access.logged"
+                    :allowLeftDrawer="true"
+                    @showDrawerLeft="showDrawerLeft = true"
+                    @expandDrawerLeft="expandDrawerLeft = !expandDrawerLeft" 
+                />
+            </q-header>
+
+            <!-- Drawers -->
+            <q-drawer
+                v-if="$store.access.logged"
+                v-model="showDrawerLeft"
+                :mini="expandDrawerLeft"
+                show-if-above
+                bordered
+            >
+                <LeftDrawer 
+                    @logout="logoutUser()" 
+                />
+            </q-drawer>
+
+            <!-- Content -->
+            <q-page-container 
+                :class="{
+                    'background': !$q.dark.isActive,
+                    'background-dark': $q.dark.isActive
+                }"
+            >
+                <router-view 
+                    @login="() => authUser()"
+                    @logout="(message) => removeSession(message)"
+                />
+            </q-page-container>
+
+            <!-- Footer -->
+            <q-footer
                 v-if="!$store.access.logged"
-                :allowSubNav="true"
-                :allowLeftDrawer="false"
-                @drawerLeft="expandDrawerLeft = !expandDrawerLeft"
-                @login="authUser()" 
-            />
-            <NavTopUser
-                v-else-if="$store.access.logged"
-                :allowLeftDrawer="true"
-                @showDrawerLeft="showDrawerLeft = true"
-                @expandDrawerLeft="expandDrawerLeft = !expandDrawerLeft" 
-            />
-        </q-header>
-
-        <!-- Drawers -->
-        <q-drawer
-            v-if="$store.access.logged"
-            v-model="showDrawerLeft"
-            :mini="expandDrawerLeft"
-            show-if-above
-            bordered
-        >
-            <LeftDrawer 
-                @logout="logoutUser()" 
-            />
-        </q-drawer>
-
-        <!-- Content -->
-        <q-page-container 
-            :class="{
-                'background': !$q.dark.isActive,
-                'background-dark': $q.dark.isActive
-            }"
-        >
-            <router-view 
-                @login="() => authUser()"
-                @logout="(message) => removeSession(message)"
-            />
-        </q-page-container>
-
-        <!-- Footer -->
-        <q-footer
-            v-if="!$store.access.logged"
-            bordered 
-            :class="{
-                'bg-dark': $q.dark.isActive,
-                'bg-grey-1': !$q.dark.isActive,
-                'text-white': $q.dark.isActive,
-                'text-dark': !$q.dark.isActive,
-            }">
-            <NavFoot />
-        </q-footer>
-    </q-layout>
+                bordered 
+                :class="{
+                    'bg-dark': $q.dark.isActive,
+                    'bg-grey-1': !$q.dark.isActive,
+                    'text-white': $q.dark.isActive,
+                    'text-dark': !$q.dark.isActive,
+                }">
+                <NavFoot />
+            </q-footer>
+        </q-layout>
+    </div>
     
 </template>
 
