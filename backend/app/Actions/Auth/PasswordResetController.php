@@ -24,7 +24,7 @@ class PasswordResetController extends Controller
      * @param Request $request
      * @return void
      */
-    public function sendPasswordResetLink(Request $request)
+    public function passwordResetRequest(Request $request)
     {
         try {
 
@@ -70,7 +70,7 @@ class PasswordResetController extends Controller
      * @param Request $request
      * @return void
      */
-    public function resetPassword(String $email, String $hash, Request $request) 
+    public function passwordReset(String $email, String $hash, Request $request) 
     {
         try {
             

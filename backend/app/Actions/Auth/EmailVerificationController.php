@@ -168,7 +168,7 @@ class EmailVerificationController extends Controller
      * @param Request $request
      * @return void
      */
-    public function confirmEmailLink(String $email, String $token, Request $request)
+    public function emailVerification(String $email, String $token, Request $request)
     {      
         try {
             // Validate Signature

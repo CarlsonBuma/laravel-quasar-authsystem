@@ -166,6 +166,7 @@ class UserProfileController extends Controller
     {
         try {
 
+            // Requirements & Unique Email
             $data = $request->validate([
                 'email' => ['required', 'string', 'email', 'unique:users', 'max:255'],
                 'password' => ['required', 'string', 'max:255'],

@@ -42,14 +42,14 @@ Route::post('/create-account', [RegisterController::class, 'register'])
 // Email verification
 Route::post('/email-verification-request', [EmailVerificationController::class, 'emailVerificationRequest'])
     ->name('email.verification.request');
-Route::get('/email-verification/{email}/{token}', [EmailVerificationController::class, 'confirmEmailLink'])
+Route::get('/email-verification/{email}/{token}', [EmailVerificationController::class, 'emailVerification'])
     ->middleware(['throttle:6,1'])
     ->name('email.verification');
 
 // Password reset
-Route::post('/password-reset-request', [PasswordResetController::class, 'sendPasswordResetLink'])
+Route::post('/password-reset-request', [PasswordResetController::class, 'passwordResetRequest'])
     ->name('password.reset.request');
-Route::put('/password-reset/{email}/{token}', [PasswordResetController::class, 'resetPassword'])
+Route::put('/password-reset/{email}/{token}', [PasswordResetController::class, 'passwordReset'])
     ->middleware(['throttle:6,1'])
     ->name('password.reset');
 
