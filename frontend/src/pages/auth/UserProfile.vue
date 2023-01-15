@@ -321,7 +321,9 @@ export default {
                 if(!this.emailPassword) return;
                 this.loading['email'] = this.$toast.load();
                 const response = await changeEmailRequest(this.transferEmail, this.emailPassword);
-                this.$toast.success(response.data.message)
+                this.$toast.success(response.data.message);
+                this.$emit('logout', response.data.message);
+                this.$router.push('/');
             } catch (error) {
                 const errorMessage = error.response ? error.response : error;
                 this.$toast.error(errorMessage);

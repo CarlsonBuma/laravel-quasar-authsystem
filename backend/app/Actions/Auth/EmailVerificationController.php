@@ -28,13 +28,8 @@ class EmailVerificationController extends Controller
     public function emailTransferRequest(User $user, String $newEmail)
     {
         try {
+            // Token for verification
             $token = Str::random(55);
-            PasswordReset::updateOrCreate([
-                'email' => $user->email
-            ], [
-                'token' => Hash::make($token),
-                'created_at' => now()
-            ]);
 
             // Send verification Link
             $verificationLink = Modulate::signedLink('user.transfer.verification', [
@@ -44,6 +39,14 @@ class EmailVerificationController extends Controller
             ]);
 
             Mail::to($newEmail)->send(new SendEmailVerification($verificationLink, $user));
+
+            // Verification
+            PasswordReset::updateOrCreate([
+                'email' => $user->email
+            ], [
+                'token' => Hash::make($token),
+                'created_at' => now()
+            ]);
 
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
