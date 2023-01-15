@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <q-toolbar class="q-pa-md border-left">
+        <q-toolbar class="q-pa-sm border-left">
             
             <!-- Left-Drawer -->
             <q-btn 
