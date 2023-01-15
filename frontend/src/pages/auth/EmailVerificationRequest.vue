@@ -44,7 +44,7 @@
             <BannerNote
                 :bannerType="bannerType"
                 :text="message"
-                note="*You will receive an email with a signed Link. This will redirect you to the verification page."
+                note="*After the verification link has been sent to your email, you are able to verify your account."
             />
         </CardWrapper>
     </PageWrapper>

@@ -1,6 +1,6 @@
 <template>
     
-    <q-page>
+    <q-page id="page-wrapper">
         <!-- Refresher -->
         <q-pull-to-refresh 
             :disable="!allowRefresh"

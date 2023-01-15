@@ -1,3 +1,7 @@
+main {
+    min-height: calc(100vh - 95px) !important;
+}
+
 #app-header {
     z-index: 9998;
 }
@@ -11,7 +15,7 @@
 }
 
 .background {
-    background-color: $primary;
+    background-color: rgba(37, 33, 255, 0.8);
 }
 
 .background-dark {
@@ -26,7 +30,7 @@
 }
 
 .toaster-container {
-    margin-top: 82px;
+    margin-top: 72px;
 }
 
 .q-fab__actions {

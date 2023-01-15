@@ -159,6 +159,8 @@ export default {
                 this.bannerType = "error"
             } finally {
                 this.loading = false;
+                this.password = '';
+                this.password_confirm = '';
             }
         },
     }

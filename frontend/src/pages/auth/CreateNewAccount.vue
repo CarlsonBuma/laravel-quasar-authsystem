@@ -94,7 +94,7 @@
                     <!-- Terms & Conditions -->
                     <div class="flex items-center">
                         <q-checkbox v-model="user.agreed" label="I agree with" />&nbsp;
-                        <router-link to="/terms-and-conditions">terms &amp; conditions</router-link>
+                        <router-link to="/terms-and-conditions" target="_blank">terms &amp; conditions</router-link>
                     </div>
                 </div>
             </FormWrapper>

@@ -43,7 +43,7 @@
             <BannerNote
                 :bannerType="bannerType"
                 :text="message"
-                note="*Please verify your account. You will reveice an email shortly. Please, also check your spam folder"
+                note="*After the verification link has been sent to your email, you are able to reset your password."
             />
         </CardWrapper>
     </PageWrapper>

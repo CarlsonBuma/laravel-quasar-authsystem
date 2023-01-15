@@ -49,8 +49,8 @@
                 <q-btn @click="$router.push('terms-and-conditions')" flat class="col-12" label="Terms &amp; Conditions" />
             </div>
 
-            <!-- Testing -->
-            <div class="flex justify-center">
+            <!-- Testing: Verify & Reset Password -->
+            <!-- <div class="flex justify-center">
                 <q-btn color="primary" class="q-ma-lg" label="Verify" @click="$router.push({
                     name: 'EmailVerificationRequest',
                     params: {
@@ -65,7 +65,7 @@
                         key: '123svdfs'
                     }
                 })" />
-            </div>
+            </div> -->
 
         </CardWrapper>
     </PageWrapper>
@@ -135,6 +135,7 @@ export default {
                 }
             } finally {
                 this.loading = false;
+                this.login.password = '';
             }
         }
     }
