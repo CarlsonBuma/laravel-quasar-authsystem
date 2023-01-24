@@ -1,6 +1,7 @@
 <template>
     
     <q-page id="page-wrapper">
+        
         <!-- Refresher -->
         <q-pull-to-refresh 
             :disable="!allowRefresh"
@@ -30,7 +31,7 @@
                     </div>
                     
                     <!-- Actions --> 
-                    <div class="col-auto">
+                    <div class="flex content-center">
                         <slot name="actions"/>
                     </div>
                 </q-card-section>
@@ -40,7 +41,7 @@
             <div 
                 class="flex justify-center q-pa-lg q-mb-lg"
                 :class="{
-                    'q-pt-xl': !title,   
+                    'q-pt-sm': !title,   
                 }"
             >
                 <slot />

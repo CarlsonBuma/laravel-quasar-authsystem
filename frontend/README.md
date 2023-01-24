@@ -36,6 +36,9 @@
     > Password reset
 
 ## Third-Parties Implementations
+[x] Sortablejs - vue3
+    > https://github.com/MaxLeiter/sortablejs-vue3
+    
 [X] Cookie-Consent (GDPR, eg. for Google Analytics)
     > https://github.com/eyecatchup/vue-cookieconsent
     > Implemented: "App.js" & "quasar.config.js" (as boot-file)

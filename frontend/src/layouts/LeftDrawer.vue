@@ -50,17 +50,17 @@
                 </q-item-section>
             </q-item>
 
-            <!-- Darkmode -->
-            <q-item clickable v-ripple @click="darkMode = !darkMode">
+            <!-- User-Modules -->
+            <q-item 
+                @click="$router.push('/my-gigs')"
+                clickable 
+                v-ripple
+            >
                 <q-item-section avatar>
-                    <q-icon name="dark_mode" />
+                    <q-icon name="construction" />
                 </q-item-section>
-
                 <q-item-section>
-                    <q-toggle
-                        v-model="darkMode"
-                        label="Dark"
-                    />
+                    My Gigs
                 </q-item-section>
             </q-item>
 
@@ -75,6 +75,20 @@
                 </q-item-section>
                 <q-item-section>
                     Logout
+                </q-item-section>
+            </q-item>
+
+            <!-- Darkmode -->
+            <q-item clickable v-ripple @click="darkMode = !darkMode">
+                <q-item-section avatar>
+                    <q-icon name="dark_mode" />
+                </q-item-section>
+
+                <q-item-section>
+                    <q-toggle
+                        v-model="darkMode"
+                        label="Mode"
+                    />
                 </q-item-section>
             </q-item>
 

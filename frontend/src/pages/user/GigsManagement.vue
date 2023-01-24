@@ -3,75 +3,19 @@
     width: 270px;
 }
 .my-card {
-    max-width: 25%;
+    max-width: 420px;
     min-width: 270px;
 }
 </style>
 
 <template>
 
-    <PageWrapper title="EventBox" subtitle="Meet &amp; Greet.">
+    <PageWrapper title="GIGs Management" :directory="directory">
 
-        <!-- Entity Drawer -->
-        <q-drawer
-            side="right"
-            v-model="drawerRightEntity"
-            bordered
-            overlay
-            :width="250"
-            :breakpoint="500"
-            elevated
-        >
-            <q-scroll-area class="fit">
-                <q-btn color="orange" class="shadow w-100" square icon="close" @click="{
-                    drawerRightEntity = false;
-                    drawerRightRequirements = false;    
-                }" />
-                <div class="q-pa-sm">
-                    <div class="text-h6 q-ma-md">Entity details</div>
-                    <q-separator class="q-mt-md q-mb-md"/>
-
-                    <!-- Entity Details -->
-
-                </div>
-            </q-scroll-area>
-        </q-drawer>
-
-        <!-- Entity Drawer -->
-        <q-drawer
-            side="right"
-            v-model="drawerRightRequirements"
-            bordered
-            overlay
-            :width="250"
-            :breakpoint="500"
-            elevated
-        >
-            <q-scroll-area class="fit">
-                <q-btn color="orange" class="shadow w-100" icon="close" @click="{
-                    drawerRightEntity = false;
-                    drawerRightRequirements = false;    
-                }"
-            />
-                <div class="q-pa-sm">
-                    <div class="text-h6 q-ma-md">Progress details</div>
-                    <q-separator class="q-mt-md q-mb-md"/>
-
-                    <!-- Gig Details -->
-                    <div><b>Progress:</b></div>
-                    <div>Here comes Progress</div>
-                    <q-separator class="q-ma-sm"></q-separator>
-                    <div><b>Requirements:</b></div>
-                    <div>Requirements by Progress</div>
-                </div>
-            </q-scroll-area>
-        </q-drawer>
-
-        <!-- Overview -->
         <template #actions>
-            Search / Filter
+            <q-btn @click="$router.push('add-new-gig')" icon="add" flat label="Create Gig" />
         </template>
-        
+    
         <q-card
             v-for="(gig) in gigRequests"
             :key="gig.gigKey"
@@ -94,7 +38,7 @@
                 </q-img>
 
                 <q-card-actions vertical class="justify-around q-px-md">
-                    <q-btn flat round color="primary" icon="share" @click="{
+                    <q-btn flat round color="primary" icon="history" @click="{
                         drawerRightRequirements = false;
                         drawerRightEntity = !drawerRightEntity;
                     }" />
@@ -106,45 +50,93 @@
             </q-card-section>
 
             <q-card-section>
-                <div><b>About Projecti:</b></div>
+                <div><b>About Gig:</b></div>
+
+                
                 <div> {{ gig.about }}</div>
+
+                
 
                 <q-separator class="q-ma-sm"></q-separator>
                 <div><b>Deails:</b></div>
                 <div>Start: {{ gig.start }}</div>
-                <div>Duration: {{ gig.duration }}</div>
-                <div>Compensation: {{ gig.pricerange[0] + ' - ' + gig.pricerange[1] + 'CHF'}}</div>
+                <div>Deadline: {{ gig.duration }}</div>
                 
                 <q-separator class="q-ma-sm"></q-separator>
-                <div><b>Requirements:</b></div>
+                <div><b>Feature Progress:</b></div>
+                
+                <div class="q-pa-md">
+                    Complete:
+                    <q-linear-progress rounded size="15px" color="teal" value="0.25"/>
+                </div>
+                
                 <div>
                     <q-chip 
                         v-for="tag in gig.skills"
                         :key="tag.key"
                         square 
                         class="glossy"
-                        :icon="tag.available ? 'close' : 'check'"
-                        :color="tag.available ? 'orange' : 'teal'"
+                        :icon="tag.status === 'done' 
+                            ? 'check' 
+                            : tag.status === 'pending'
+                                ? 'flag'
+                                : 'pending'"
+                        :color="tag.status === 'done' 
+                            ? 'teal' 
+                            : tag.status === 'pending'
+                                ? 'orange' 
+                                : ''"
                     >
                         {{ tag.label }}
                     </q-chip>
                 </div>
+
+
+
+
                 <q-separator class="q-ma-sm"></q-separator>
-                <div>Amount of Specialists: {{ gig.ops }}</div>
+                <div><b>Current Tasks:</b> [Laravel &amp; SQL]</div>
+                <div>
+                    <q-chip 
+                        v-for="tag in gig.skills"
+                        :key="tag.key"
+                        square 
+                        class="glossy"
+                        icon="pending"
+                    >
+                        {{ tag.label }}
+                    </q-chip>
+                </div>
+                
+                
+                <q-separator class="q-ma-sm"></q-separator>
+                <div class="flex justify-end">
+                    <div class="w-100 flex justify-center">
+                        <q-avatar
+                            v-for="n in 15"
+                            :key="n"
+                            size="40px"
+                            class="q-ma-xs"
+                        >
+                            <img :src="`https://cdn.quasar.dev/img/avatar${n + 1}.jpg`">
+                        </q-avatar>
+                    </div>
+                    
+                    <q-btn @click="$router.push('manage-team')" icon="group" flat label="Manage Team" />
+                </div>
             </q-card-section>
         </q-card>
-        
     </PageWrapper>
 
 </template>
 
 <script>
 import { ref } from 'vue';
-import { gigsAPI } from 'src/apis/visitor.js';
+import { getGigs } from 'src/apis/user.js';
 import PageWrapper from 'components/PageWrapper.vue';
 
 export default {
-    name: 'GigBox',
+    name: 'GigsManagement',
     components: {
         PageWrapper
     },
@@ -158,9 +150,17 @@ export default {
         };
 
         // Table
-        const gigRequests = gigsAPI();
+        const gigRequests = getGigs();
 
         return {
+            directory: [{
+                label: 'Dashboard',
+                redirect: '/dashboard'
+            }, {
+                label: 'My Gigs',
+                redirect: '/my-gigs'
+            }],
+
             drawerRightEntity: ref(false),
             drawerRightRequirements: ref(false),
             reviews: ref(69),
@@ -171,7 +171,9 @@ export default {
             // Table
             loading: ref(false),
             pagination,
-            gigRequests
+            gigRequests,
+
+            
         }
     },
     methods: {

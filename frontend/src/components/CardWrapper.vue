@@ -8,22 +8,26 @@
             minWidth: '320px'
         }" 
     >
-        <!-- Header + Actions -->
-        <q-card-section v-if="allowHeader" horizontal>
+        <!-- Actions -->
+        <q-card-section v-if="allowActions" horizontal>
             <slot name="head" />
             <q-card-actions 
-                v-if="allowActions"  
                 class="justify-around"
                 vertical
             >
                 <slot name="actions" />
             </q-card-actions>
         </q-card-section>
-        <q-separator v-if="allowHeader" />
+        <q-separator v-if="allowActions" />
 
         <!-- Card Body -->
         <q-card-section>
-            <div class="flex items-center text-h6 _overflow-hidden">
+            
+            <!-- Titile -->
+            <div
+                v-if="title" 
+                class="flex items-center text-h6 _overflow-hidden"
+            >
                 
                 <!-- Navigation: Go back -->
                 <q-btn 
@@ -59,18 +63,20 @@
 
                 <!-- Title -->
                 {{ title }}
-            
             </div>
 
             <!-- Subtitle -->
             <p v-if="subtitle" class="q-ml-sm q-mr-sm text-caption _text-break">{{ subtitle }}</p>
             
-            <!-- Head -->
-            <q-separator class="q-mt-md q-mb-lg"/>
+            <!-- Header -->
             <div class="w-100 text-center q-mb-md">
                 <slot name="header" />
             </div>
+
+            <!-- Body -->
+            <q-separator class="q-mt-md q-mb-lg" />
             
+            <!-- Main -->
             <slot />
 
             <!-- Bottom Slot -->
@@ -90,7 +96,6 @@ export default {
         iconClass: String,
         iconColor: String,
         cardWidth: String,
-        allowHeader: Boolean,
         allowActions: Boolean,
     },
 };

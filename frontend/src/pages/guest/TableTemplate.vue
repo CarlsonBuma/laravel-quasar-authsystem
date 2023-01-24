@@ -6,7 +6,7 @@
 
 <template>
 
-    <PageWrapper title="Businessbox" subtitle="Finden Sie ihren Partner.">
+    <PageWrapper title="Table" subtitle="Tablemanagement">
 
         <!-- Overview -->
         <template #actions>
@@ -33,7 +33,7 @@
         <!-- Services --> 
         <div class="w-100 q-pl-sm q-pr-sm">
             <q-table
-                title="Businessbox"
+                title=""
                 row-key="key"
                 :rows="rows"
                 :columns="columns"
@@ -46,6 +46,7 @@
                 <template v-slot:top-right>
                     <!-- Search -->
                     <q-input 
+                        v-if="searchSlot"
                         v-model="searchFilter"
                         dense 
                         class="search-width"
@@ -165,12 +166,11 @@
 
 <script>
 import { ref } from 'vue';
-import { date } from 'quasar';
-import { teamsAPI } from 'src/apis/visitor.js';
+import { tableRows, tableColumns } from 'src/apis/visitor.js';
 import PageWrapper from 'components/PageWrapper.vue';
 
 export default {
-    name: 'AgileTeams',
+    name: 'TableTemplate',
     components: {
         PageWrapper
     },
@@ -184,91 +184,15 @@ export default {
         };
 
         // Table Columns
-        const textBreakClass = 'word-break: break-all; overflow: auto;white-space: pre-wrap;';
-        const rows = teamsAPI();
-        const columns = [
-            { 
-                name: 'line',  
-                label: 'Line', 
-                align: 'left',
-                field: 'line',
-                sortable: true,
-                filter: 'option'          // Filter Types: text, number, tags, option, range, date
-            },
-            { 
-                name: 'skills',  
-                label: 'Skillset',
-                align: 'left', 
-                style: 'width: 20vw; min-width: 240px;' + textBreakClass,
-                field: 'skills',
-                filter: 'tags'
-            },
-            { 
-                name: 'about',  
-                label: 'About',
-                style: 'min-width: 380px;' + textBreakClass,
-                align: 'left',
-                field: 'about',
-                format: val => `${val}`, 
-                filter: 'text'
-            },
-            { 
-                name: 'available', 
-                label: 'Available',
-                align: 'left', 
-                field: 'available', 
-                format: val => {
-                    const currentDate = date.formatDate(new Date(), 'YYYY-MM-DD');
-                    const availableDate = date.formatDate(val, 'YYYY-MM-DD')
-                    console.log(currentDate < availableDate)
-                    return (date.getDateDiff(currentDate, availableDate, 'days'))// ? '' : date.formatDate(val, 'DD-MM-YYYY');
-                },
-                sortable: true, 
-                filter: 'date'
-            },
-            { 
-                name: 'name',  
-                label: 'Entity', 
-                align: 'left',
-                field: 'name',
-                format: val => `${val}`,
-                sortable: true,
-                filter: 'text'          // Filter Types: text, number, tags, option, range, date
-            },
-            { 
-                name: 'ops', 
-                label: 'Ops.',
-                align: 'center', 
-                field: 'ops', 
-                sortable: true, 
-                sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-                filter: 'number'
-            },
-            // { 
-            //     name: 'pricerange', 
-            //     label: 'Pricerange',
-            //     align: 'left', 
-            //     field: 'pricerange',
-            //     sortable: true, 
-            //     sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-            //     filter: 'range'
-            // },
-            { 
-                name: 'reviews', 
-                label: 'Reviews',
-                align: 'center', 
-                field: 'reviews', 
-                sortable: true, 
-                sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-                filter: 'number'
-            },
-        ];
+        const columns = tableColumns();
+        const rows = tableRows();  
         
         return {
             reviews: ref(59),
             ops: ref(249),
             partners: ref(17),
             // Filter
+            searchSlot: false,
             searchFilter: ref(''),
             // Table
             loading: ref(false),

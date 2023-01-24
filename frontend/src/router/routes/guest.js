@@ -23,13 +23,15 @@ const routesGuest = [
 
     // Businessbox
     {
-        path: "/gigs",
-        name: "GigBox",
-        component: () => import('src/pages/guest/GigBox.vue'),
-    }, {
-        path: "/teams",
-        name: "AgileTeams",
-        component: () => import('src/pages/guest/AgileTeams.vue'),
+        path: "/table",
+        name: "TableTemplate",
+        component: () => import('src/pages/guest/TableTemplate.vue'),
+    }, 
+    
+    {
+        path: "/card",
+        name: "CardResponse",
+        component: () => import('src/pages/guest/CardResponse.vue'),
     }
     // {
     //     path: "/about-us",
