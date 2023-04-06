@@ -39,16 +39,20 @@ const userLogout = () => {
  *      > Verify transfer
  *  > delete Account
  */
+
+// User - Update Avatar
 const changeAvatar = (formData) => {
     return axios.post('/user-change-avatar', formData);
 }
 
+// User - Change Name
 const changeName = (userName) => {
     return axios.post('/user-change-name', {
         name: userName
     });
 }
 
+// User - Change Password
 const changePassword = (current, password, confirm) => {
     return axios.post('user-change-password', {
         'password_current': current,
@@ -57,20 +61,24 @@ const changePassword = (current, password, confirm) => {
     });
 }
 
-const changeEmailRequest = (email, password) => {
-    // Transfer account
-    return axios.post('user-transfer-request', {
+// User - Transfer Account
+const transferAccount = (email, password) => {
+    return axios.post('user-transfer-account', {
         'email': email,
         'password': password
     });
 }
 
-const changeEmail = (signedRoute) => {
+const updateEmail = (signedRoute, pw, pw_confirm) => {
+    // transferAccount is in progress - Request to origin URL (Client)
     // Redirecting Request from Client-URL to Origin-URL (SERVER)
-    // Server Request to signedRoute
-    return axios.get(signedRoute);
+    return axios.put(signedRoute, {
+        'password': pw,
+        'password_confirmation': pw_confirm
+    });
 }
 
+// User - Delete Account
 const deleteUser = (password) => {
     return axios.post('user-delete-account', {
         'password': password,
@@ -87,6 +95,8 @@ const deleteUser = (password) => {
  *      > Request reseting password
  *      > Reset Password
  */
+
+// Register
 const createAccount = (user) => {
     return axios.post("/create-account", {
         'name': user.name,
@@ -97,6 +107,7 @@ const createAccount = (user) => {
     });
 }
 
+// Email Verification
 const emailVerificationRequest = (email) => {
     return axios.post("/email-verification-request", {
         'email': email,
@@ -109,18 +120,19 @@ const emailVerification = (signedRoute) => {
     return axios.get(signedRoute);
 }
 
-const requestNewPassword = (email) => {
+// Password Reset
+const passwordResetRequest = (email) => {
     return axios.post("/password-reset-request", {
         'email': email
     });
 }
 
-const setNewPassword = (signedRoute, credentials) => {
+const passwordReset = (signedRoute, password, password_confirm) => {
     // Redirecting Request from Client-URL to Origin-URL (SERVER)
     // Server Request to signedRoute
     return axios.put(signedRoute, {
-        'password': credentials.password,
-        'password_confirmation': credentials.password_confirm
+        'password': password,
+        'password_confirmation': password_confirm
     });
 }
 
@@ -131,13 +143,13 @@ export {
     userLogout,
     changeAvatar,
     changeName,
-    changeEmailRequest,
-    changeEmail,
+    transferAccount,
+    updateEmail,
     changePassword,
     deleteUser,
     createAccount,
     emailVerificationRequest,
     emailVerification,
-    requestNewPassword,
-    setNewPassword
+    passwordResetRequest,
+    passwordReset
 };

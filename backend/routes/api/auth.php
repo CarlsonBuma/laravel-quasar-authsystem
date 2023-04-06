@@ -1,18 +1,26 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Actions\Auth\UserAuthController;
 use App\Actions\Auth\RegisterController;
+use App\Actions\Auth\UserAuthController;
 use App\Actions\Auth\UserProfileController;
-use App\Actions\Auth\EmailVerificationController;
 use App\Actions\Auth\PasswordResetController;
+use App\Actions\Auth\TransferAccountController;
+use App\Actions\Auth\EmailVerificationController;
 
 /*
- * AUTH System
+ * AUTH System - User Session
  *  > CSRF: "/sanctum/csrf-cookie"
  *  > Login
  *      > AUTH
  *      > Logout
+ *  > Create Account
+ *      > Verify Email
+ *      > Request verify email 
+ *  > Reset Password
+ *      > Request reseting password
+ *      > Reset Password
+ *  > Verify new Email
  */
 Route::post('/login', [UserAuthController::class, 'loginUser'])
     ->middleware(['throttle:6,1'])    
@@ -26,35 +34,33 @@ Route::post('/logout', [UserAuthController::class, 'logoutUser'])
     ->middleware(['auth:sanctum', 'email_verified'])
     ->name('logout'); 
 
-/*
- * Account Managemenr
- *  > create Account
- *  > verify Account
- *      > Request verify email 
- *      > Verify email
- *  > reset Password
- *      > Request reseting password
- *      > Reset Password
- */
+// Create Account
 Route::post('/create-account', [RegisterController::class, 'register'])
     ->name('create.account');
 
-// Email verification
+// Email Verification
 Route::post('/email-verification-request', [EmailVerificationController::class, 'emailVerificationRequest'])
     ->name('email.verification.request');
 Route::get('/email-verification/{email}/{token}', [EmailVerificationController::class, 'emailVerification'])
     ->middleware(['throttle:6,1'])
     ->name('email.verification');
 
-// Password reset
+// Password Reset
 Route::post('/password-reset-request', [PasswordResetController::class, 'passwordResetRequest'])
     ->name('password.reset.request');
 Route::put('/password-reset/{email}/{token}', [PasswordResetController::class, 'passwordReset'])
     ->middleware(['throttle:6,1'])
     ->name('password.reset');
 
+// Transfer Account
+// Update Email, Set new Password, Verify Email
+Route::put('/transfer-account/{email}/{token}/{transfer}', [TransferAccountController::class, 'transferAccount'])
+    ->middleware(['throttle:6,1'])
+    ->name('transfer.account');
+
 /*
- * User Account Management
+ * Auth by "Sanctum"
+ * User - Account Management
  *  > change Avatar
  *  > change Name
  *  > change Password
@@ -63,14 +69,9 @@ Route::put('/password-reset/{email}/{token}', [PasswordResetController::class, '
  *      > Verify transfer
  *  > delete Account
  */
-
-// Verify new email adress, with current account
-
-
-// AUTHENTICATED
 Route::middleware(['auth:sanctum', 'email_verified'])->group(function () {
     
-    // Profile
+    // User Profile
     Route::post('/user-change-avatar', [UserProfileController::class, 'changeAvatar'])
         ->name('user.change.avatar');
     Route::post('/user-change-name', [UserProfileController::class, 'changeName'])
@@ -78,13 +79,10 @@ Route::middleware(['auth:sanctum', 'email_verified'])->group(function () {
     Route::post('/user-change-password', [UserProfileController::class, 'changePassword'])
         ->name('user.change.password');
     
-    // Email Transfer Request - Validate before updating new email
-    Route::post('/user-transfer-request', [UserProfileController::class, 'accountTransferRequest'])
-        ->name('user.transfer.request');
-    Route::get('/user-transfer-verification/{email}/{token}/{transfer}', [EmailVerificationController::class, 'accountTransfer'])
-        ->withoutMiddleware(['auth:sanctum', 'email_verified'])
-        ->middleware(['throttle:6,1'])
-        ->name('user.transfer.verification');
+    // Transfer Account Request 
+    // Email will be updated, after Emailverification, email_verified_at = null
+    Route::post('/user-transfer-account', [TransferAccountController::class, 'accountTokenRequest'])
+        ->name('user.transfer.account');
     
     // Delete User
     Route::post('/user-delete-account', [UserProfileController::class, 'deleteAccount'])

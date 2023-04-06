@@ -24,6 +24,7 @@
                             caption="Define a goal."
                             icon="settings"
                             :done="step > 1"
+                            :disable="step > 1"
                         >
                             <CreateGig
                                 @create="(gig) => createGig(gig)" 
@@ -36,6 +37,7 @@
                             caption="Roadmap to success."
                             icon="create_new_folder"
                             :done="step > 2"
+                            :disable="step > 2"
                         >
                             <AddFeatures
                                 :gig="gig"
@@ -48,7 +50,8 @@
                             title="Connect tasks"
                             caption="Keep controll."
                             icon="assignment"
-                            disable
+                            :disable="step > 3"
+
                         >
                             This step won't show up because it is disabled.
                         </q-step>
@@ -147,7 +150,7 @@ export default {
     setup() {
         return {
             // Basics
-            step: ref(1),
+            step: ref(2),
 
             // Head
             contacts,

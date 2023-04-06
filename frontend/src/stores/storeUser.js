@@ -1,27 +1,29 @@
+'use strict';
 import { defineStore } from "pinia";
+
+const sessionName = process.env.SESSION_NAME;
 
 const userStore = defineStore({
     id: "user",
     state: () => ({
         access: {
-            logged: false,
-            role: 'guest'       // Default roles as 'user', 'admin'
+            user: false,
+            admin: false,
+            role: 'guest',          // Default roles as 'user', 'admin'
         },
         user: {
             id: 0,
-            name: 'bumaUser',
+            name: 'User',
             avatar: '',
-            email: 'email@email.com'
+            email: ''
         },
     }),
     actions: {
         
         loginUser(user) {
-            // Baerer Token API
-            // this.$axios.defaults.headers.common["Authorization"] = "Bearer_" + user.token;
-            
             // User Auth
-            this.access.logged = true;
+            this.access.user = true;
+            this.access.admin = user.is_admin
             this.access.role = user.role
 
             // Credits
@@ -32,19 +34,40 @@ const userStore = defineStore({
         },
 
         logoutUser() {
-            // Remove Baerer Token
-            // this.$axios.defaults.headers.common["Authorization"] = "";
+            // Remove Session everytime
+            this.removeSession();
 
             // User Auth
-            this.access.logged = false;
-            this.access.role = 'guest'
+            this.access.user = false;
+            this.access.admin = false;
+            this.access.role = 'guest';
 
             this.user = {
                 id: 0,
-                name: 'bumaUser',
+                name: 'User',
                 avatar: '',
-                email: 'email@email.com'
+                email: ''
             };
+        },
+
+        setSession() {
+            // Baerer Token API
+            // this.$axios.defaults.headers.common["Authorization"] = "Bearer_" + user.token;
+
+            // Set Session
+            localStorage.setItem(sessionName, 'true');
+        },
+
+        removeSession() {
+            // Remove Baerer Token
+            // this.$axios.defaults.headers.common["Authorization"] = "";
+
+            // Remove Sesseion
+            localStorage.removeItem(sessionName);
+        },
+
+        removeAdmin() {
+            this.access.admin = false;
         }
     }
 });

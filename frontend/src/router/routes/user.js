@@ -6,7 +6,7 @@ const routesUser = [
         name: 'Dashboard',
         component: () => import('src/pages/user/Dashboard.vue'),
         beforeEnter: (to, from, next) => {
-            if (!store().access.logged) next({ name: "Welcome" });
+            if (!store().access.user) next({ name: "Welcome" });
             else next();
         },
     },
@@ -15,7 +15,7 @@ const routesUser = [
         name: 'GigsManagement',
         component: () => import('src/pages/user/GigsManagement.vue'),
         beforeEnter: (to, from, next) => {
-            if (!store().access.logged) next({ name: "Welcome" });
+            if (!store().access.user) next({ name: "Welcome" });
             else next();
         },
     },
@@ -24,7 +24,7 @@ const routesUser = [
         name: 'AddNewGig',
         component: () => import('src/pages/user/gig-management/AddNewGig.vue'),
         beforeEnter: (to, from, next) => {
-            if (!store().access.logged) next({ name: "Welcome" });
+            if (!store().access.user) next({ name: "Welcome" });
             else next();
         },
     },

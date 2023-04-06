@@ -1,27 +1,12 @@
-<style scoped>
-.extra-margin {
-    padding-bottom: 80px;
-}
-</style>
-
 <template>
 
-    <PageWrapper>
+    <PageWrapper :rendering="loading">
         <CardWrapper
             :goBack="true"
-            cardWidth="520px"
-            class="q-mb-md"
-            title="Create new account"
+            title="Create account"
+            iconHeader="admin_panel_settings"
+            note="*After registration, plese verify your account by to provided link we send you by email."
         >
-            <template #header>
-                <q-icon
-                    name="admin_panel_settings"
-                    color="blue"
-                    class="col q-ma-md" 
-                    size="200px" 
-                />
-            </template>
-
             <!-- Registration -->
             <FormWrapper
                 buttonText="Create account"
@@ -34,7 +19,11 @@
                     filled
                     v-model="user.name"
                     label="Username"
-                />
+                >
+                    <template v-slot:prepend>
+                        <q-icon name="person" />
+                    </template>
+                </q-input>
 
                 <!-- Email -->
                 <q-input
@@ -42,74 +31,33 @@
                     type="email"
                     v-model="user.email"
                     label="Email"
-                />
+                >
+                    <template v-slot:prepend>
+                        <q-icon name="mail" />
+                    </template>
+                </q-input>
 
                 <!-- Registering vs. Verification -->
-                <div>
-                    <q-input
-                        filled
-                        type="password"
-                        v-model="user.password"
-                        label="Password"
-                        bottom-slots
-                        class="extra-margin"
-                    >
-                        <template v-slot:hint>
-                            <div>
-                                <p class="flex items-center align-center">
-                                    <q-icon 
-                                        :name="regRulesPassword.min_length.test(user.password) ? 'check_circle_outline' : 'highlight_off'" 
-                                        :color="regRulesPassword.min_length.test(user.password) ? 'green' : 'orange'"
-                                    />&nbsp;At least 7 characters
-                                </p>
-                                <p class="flex items-center align-center">
-                                    <q-icon 
-                                        :name="regRulesPassword.capital_letter.test(user.password) ? 'check_circle_outline' : 'highlight_off'" 
-                                        :color="regRulesPassword.capital_letter.test(user.password) ? 'green' : 'orange'"
-                                    />&nbsp;1 capital letter
-                                </p> 
-                                <p class="flex items-center align-center">
-                                    <q-icon 
-                                        :name="regRulesPassword.number.test(user.password) ? 'check_circle_outline' : 'highlight_off'" 
-                                        :color="regRulesPassword.number.test(user.password) ? 'green' : 'orange'"
-                                    />&nbsp;1 number
-                                </p>
-                            </div>
-                            
-                        </template>
-                    </q-input>
+                <SetPassword
+                    :reset="resetPw"
+                    @input="(pw, pw_confirm) => {
+                        this.user.password = pw;
+                        this.user.password_confirm = pw_confirm;
+                    }"
+                />
 
-                    <!-- Password Confirm -->
-                    <q-space class="xtra-space" />
-                    <q-input
-                        class="q-mt-md"
-                        filled
-                        type="password"
-                        v-model="user.password_confirm"
-                        label="Confirm password"
-                        lazy-rules
-                        :rules="[ val => val === user.password || 'Password does not match']"
-                    />
-                    
-                    <!-- Terms & Conditions -->
-                    <div class="flex items-center">
-                        <q-checkbox v-model="user.agreed" label="I agree with" />&nbsp;
-                        <router-link to="/terms-and-conditions" target="_blank">terms &amp; conditions</router-link>
-                    </div>
+                <!-- Terms & Conditions -->
+                <div class="flex items-center">
+                    <q-checkbox v-model="user.agreed" label="I agree with" />&nbsp;
+                    <div @click="showTerms = true"><u>terms &amp; conditions</u></div>
                 </div>
             </FormWrapper>
-
-            <!-- Message -->
-            <BannerNote
-                :bannerType="success 
-                    ? 'success' 
-                    : 'error'
-                "
-                :text="message"
-                note="*After successfull registration, you must verify your email. We send your activation-key to the provided email."
-            />
-
         </CardWrapper>
+
+        <!-- Terms & Conditions -->
+        <q-dialog v-model="showTerms">
+                <TermsConditions class="q-mt-xl" />
+        </q-dialog>
     </PageWrapper>
 
 </template>
@@ -119,21 +67,22 @@ import { ref } from 'vue';
 import PageWrapper from 'components/PageWrapper.vue';
 import CardWrapper from 'components/CardWrapper.vue';
 import FormWrapper from 'components/FormWrapper.vue';
-import BannerNote from 'src/components/BannerNote.vue';
+import SetPassword from 'src/components/SetPassword.vue';
+import TermsConditions from 'src/pages/guest/compliance/TermsConditions.vue';
 import { createAccount } from 'src/apis/auth.js';
 import { passwordRequirements, regRules } from 'src/modules/globals.js';
 
 export default {
     name: 'CreateNewAccount',
     components: {
-        PageWrapper, CardWrapper, FormWrapper, BannerNote
+        PageWrapper, CardWrapper, FormWrapper, 
+        SetPassword, TermsConditions
     },
     setup() {
         return {
             loading: ref(false),
-            success: ref(false),
-            message: ref(''),
-            regRulesPassword: regRules.passwordPattern,
+            showTerms: ref(false),
+            resetPw: ref(false),
             regRulesEmail: regRules.email
         };
     },
@@ -156,21 +105,19 @@ export default {
          *      > Show Verify Email
          */
         async registerUser() {
-
-            this.success = false;
-            this.message = '';
-
             try {
-                // Check
+                // Validate
                 if(!this.user.name) throw 'Please enter a name.';
-                else if (!this.regRulesEmail.test(this.user.email)) throw 'No valid email.';
-                passwordRequirements(this.user.password);
+                if (!this.regRulesEmail.test(this.user.email)) throw 'No valid email.';
+                passwordRequirements(this.user.password, this.user.password_confirm);
+                if (!this.user.agreed) throw 'Please agree with our Terms & Conditions.';
                 
                 // Create User
                 this.loading = true;
                 const response = await createAccount(this.user);
-                this.message = this.$toast.success(response.data.message);
-                this.success = true;
+                this.$toast.success(response.data.message);
+                this.user.agreed = false;
+                this.resetPw = true;
 
                 // Redirect User to Verify Email
                 this.$router.push({
@@ -180,13 +127,9 @@ export default {
                     }
                 });
             } catch (error) {
-                const errorMessage = error.response ? error.response : error;
-                this.message = this.$toast.error(errorMessage);
+                this.$toast.error(error.response ? error.response : error);
             } finally {
                 this.loading = false;
-                this.user.password = '';
-                this.user.password_confirm = '';
-                this.user.agreed = false;
             }
         },
     }

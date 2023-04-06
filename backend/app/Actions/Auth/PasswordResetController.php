@@ -35,7 +35,7 @@ class PasswordResetController extends Controller
             // Create Reset Token
             $user = User::where('email', $data['email'])->first();
             if ($user) {
-                $token = Str::random(55);
+                $token = Str::random(125);
                 PasswordReset::updateOrCreate([
                     'email' => $user->email
                 ], [
@@ -77,10 +77,9 @@ class PasswordResetController extends Controller
             $data = $request->validate([
                 'password' => ['required', 'string', 'max:255', 'confirmed'],
             ]);
-            
-            $password = $data['password'];
 
             // Validate Password
+            $password = $data['password'];
             $verifyPassword = new Password;
             if(!$verifyPassword->verifyPassword($password)){
                 throw new Exception($verifyPassword->error);

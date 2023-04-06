@@ -7,24 +7,23 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class EmailVerified
+class IsAdmin
 {
     public function handle(Request $request, Closure $next)
     {   
         try {
             $user = Auth::user();
-            if($user && $user->email_verified_at) return $next($request);
+            if($user->is_admin->user_id) return $next($request); 
+            throw new Exception('Ups, no access to our backpanel.');
         } catch (Exception $e) {
             return response()->json([
+                'status' => 'no_admin',
                 'message' => $e->getMessage(),
-            ], 400);  
+            ], 401);  
         }
 
-        // Email not verified
         return response()->json([
-            'status' => 'email_not_verified',
-            'email' => $user->email,
-            'message' => 'Please verify your email before accessing your account.'
-        ], 401);
+            'message' => 'Ups, you are not verified.',
+        ], 401);  
     }
 }

@@ -1,22 +1,12 @@
 <template>
 
-    <PageWrapper>
+    <PageWrapper :rendering="loading">
         <CardWrapper
             :goBack="true"
-            :allowHeader="true"
-            cardWidth="520px"
-            class="q-mb-md"
             title="Reset password"
+            iconHeader="lock_clock"
+            note="*After the verification link has been sent to your email, you are able to reset your password."
         >
-            <template #header>
-                <q-icon
-                    name="lock_clock"
-                    color="blue"
-                    class="col q-ma-md" 
-                    size="200px" 
-                />
-            </template>
-
             <q-input
                 filled
                 type="email"
@@ -31,20 +21,12 @@
 
             <div class="flex items-center justify-end">
                 <ButtonSubmit 
-                    class="q-ma-sm" 
                     :loading="loading"
-                    :disable="bannerType === 'success'"
-                    buttonText="Send verification key"
+                    buttonText="Send Token"
                     @submit="resetPasswordRequest()"
+                    class="q-mt-md"
                 />
             </div>
-            
-            <!-- Message -->
-            <BannerNote
-                :bannerType="bannerType"
-                :text="message"
-                note="*After the verification link has been sent to your email, you are able to reset your password."
-            />
         </CardWrapper>
     </PageWrapper>
 
@@ -55,19 +37,16 @@ import { ref } from 'vue';
 import PageWrapper from 'components/PageWrapper.vue';
 import CardWrapper from 'components/CardWrapper.vue';
 import ButtonSubmit from 'src/components/ButtonSubmit.vue';
-import BannerNote from 'src/components/BannerNote.vue';
-import { requestNewPassword } from 'src/apis/auth.js';
+import { passwordResetRequest } from 'src/apis/auth.js';
 
 export default {
     name: 'EmailVerificationRequest',
     components: {
-        PageWrapper, CardWrapper, ButtonSubmit, BannerNote
+        PageWrapper, CardWrapper, ButtonSubmit
     },
     setup() {
         return {
             loading: ref(false),
-            bannerType: ref(''),        // 'loading', 'success', 'error'
-            message: ref(''),
         };
     },
     data() {
@@ -81,16 +60,14 @@ export default {
          */
         async resetPasswordRequest() {
             try {
-                this.bannerType = '';
+                if(!this.email) throw 'Please enter your email.'
                 this.loading = true;
-                const response = await requestNewPassword(this.email);
-                this.bannerType = "success"
-                this.message = this.$toast.success(response.data.message);
+                const response = await passwordResetRequest(this.email);
+                this.$toast.success(response.data.message);
+                this.$router.push('/')
             } catch (error) {
-                this.bannerType = "error"
                 const errorMessage = error.response ? error.response : error
-                this.message = this.$toast.error(errorMessage);
-                console.log(error.response)
+                this.$toast.error(errorMessage);
             } finally {
                 this.loading = false;
             }

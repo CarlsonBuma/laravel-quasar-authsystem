@@ -8,16 +8,8 @@ const routesAuth = [
         name: "CreateNewAccount",
         component: () => import('src/pages/auth/CreateNewAccount.vue'),
     },
-    {
-        path: "/email-verification-request/:email",
-        name: "EmailVerificationRequest",
-        component: () => import('src/pages/auth/EmailVerificationRequest.vue'),
-    },
-    {
-        path: "/email-verification/:email/:key",
-        name: "EmailAccountVerification",
-        component: () => import('src/pages/auth/EmailAccountVerification.vue'),
-    }, 
+
+    // Password Reset
     {
         path: "/password-reset-request",
         name: "PasswordResetRequest",
@@ -29,11 +21,23 @@ const routesAuth = [
         component: () => import('src/pages/auth/PasswordReset.vue'),
     },
 
+    // Email Verification
+    {
+        path: "/email-verification-request/:email",
+        name: "EmailVerificationRequest",
+        component: () => import('src/pages/auth/EmailVerificationRequest.vue'),
+    },
+    {
+        path: "/email-verification/:email/:key",
+        name: "EmailAccountVerification",
+        component: () => import('src/pages/auth/EmailAccountVerification.vue'),
+    }, 
+
     // Transfer Account
     {
-        path: "/user-transfer-verification/:email/:key/:transfer",
-        name: "EmailTransferVerification",
-        component: () => import('src/pages/auth/EmailTransferVerification.vue'),
+        path: "/transfer-account/:email/:key/:transfer",
+        name: "TransferAccount",
+        component: () => import('src/pages/auth/TransferAccount.vue'),
     },
 
     // User Session
@@ -47,7 +51,7 @@ const routesAuth = [
         name: "UserProfile",
         component: () => import('src/pages/auth/UserProfile.vue'),
         beforeEnter: (to, from, next) => {
-            if (!store().access.logged) next('/');
+            if (!store().access.user) next('/');
             else next();
         },
     },

@@ -1,7 +1,6 @@
 <template>
 
     <q-btn 
-        class="q-ma-sm q-mt-md"
         :disable="loading || disabled"
         :label="buttonText ? buttonText : 'Submit'" 
         :color="buttonColor ? buttonColor : 'primary'"

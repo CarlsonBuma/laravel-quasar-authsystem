@@ -1,7 +1,7 @@
 <template>
     
     <q-page id="page-wrapper">
-        
+
         <!-- Refresher -->
         <q-pull-to-refresh 
             :disable="!allowRefresh"
@@ -52,22 +52,45 @@
 </template>
 
 <script>
+import { QSpinnerGears } from 'quasar'
+
 export default {
     name: 'PageWrapper',
+
     props: {
         title: String,
         subtitle: String,
         directory: Array,
         allowRefresh: Boolean,
+        rendering: Boolean
     },
+
     emits: [
         'refresh'
     ],
+
+    watch: {
+        rendering: function (value) {
+            value ? this.startRendering() : this.stopRendering()
+        },
+    },
+
     methods: {
         refresh(done) {
             this.$emit('refresh');
             done();
         },
+
+        startRendering() {
+            this.$q.loading.show({
+                spinner: QSpinnerGears,
+                message: 'Loading data. Please wait...',
+            })
+        },
+
+        stopRendering() {
+            this.$q.loading.hide()
+        }
     }
 };
 </script>

@@ -21,7 +21,7 @@ class UserAuthController extends Controller
     public function authUser()
     {
         $user = Auth::user();
-
+        $isAdmin = Auth::user()->is_admin->exists();
         $avatarPath = $user->avatar
             ? asset(public_path('avatar') . '/' . $user->avatar)
             : '';
@@ -31,7 +31,8 @@ class UserAuthController extends Controller
             'name' => $user->name,
             'avatar' => $avatarPath,
             'email' => $user->email,
-            'role' => 'owner'
+            'role' => 'owner',
+            'is_admin' => $isAdmin
         ], 200);
     }
 
@@ -47,27 +48,20 @@ class UserAuthController extends Controller
     public function loginUser(Request $request)
     {
         try {
-
             $credentials = $request->validate([
                 'email' => ['required', 'email'],
                 'password' => ['required'],
                 'remember' => ['required', 'boolean']
             ]);
 
-            // Check Credentials
+            // Authorize User
             if (Auth::attempt([
-                'email' => $credentials['email'],
-                'password' => $credentials['password'],
-
-                // CHeck if user is Verified
-                // if user does not exists, email does not exists
-                fn ($query) => $this->emailVerified = $query && $query->first() 
-                    ? $query->first()->user_is_verified() 
-                    : true,
-            ], $credentials['remember'])) 
-            {
-                // Success
-                if($this->emailVerified) {
+                    'email' => $credentials['email'],
+                    'password' => $credentials['password'],
+                ], $credentials['remember']
+            )){
+                // Check if Email is verified
+                if(Auth::user()->email_verified_at) {
                     $user = Auth::user();
                     $request->session()->regenerate();
                     return response()->json([
@@ -75,31 +69,23 @@ class UserAuthController extends Controller
                         'success' => true,
                         'email' => false
                     ], 200);
+                } else {
+                    return response()->json([
+                        'status' => 'email_not_verified',
+                        'email' => $credentials['email'],
+                        'message' => 'Please verify your email before accessing your account.',
+                    ], 401);
                 }
             }
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
-                'success' => false,
-                'email' => false
-            ], 403);
+            ], 401);
         }
 
-        // Response for not verified Mail
-        if(!$this->emailVerified) {
-            return response()->json([
-                'message' => 'Please verify your email before accessing your account.',
-                'success' => false,
-                'email' => true
-            ], 403);
-        }
-        
-        // Default Answer
         return response()->json([
             'message' => 'The provided credentials do not match our records.',
-            'success' => false,
-            'email' => false
-        ], 403);
+        ], 401);
     }
 
     /**
@@ -121,7 +107,7 @@ class UserAuthController extends Controller
             ], 400);
         }
         return response()->json([
-            'message' => 'Logged out successfully. See you soon.'
+            'message' => 'Logged out. See you soon.'
         ], 200);
     }
 }

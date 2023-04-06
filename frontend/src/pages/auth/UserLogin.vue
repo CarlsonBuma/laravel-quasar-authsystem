@@ -1,22 +1,11 @@
 <template>
 
-    <PageWrapper>
+    <PageWrapper :rendering="loading">
         <CardWrapper
             :goBack="true"
-            :allowHeader="true"
-            cardWidth="520px"
-            class="q-mb-md"
             title="Login"
+            iconHeader="verified_user"
         >
-            <template #header>
-                <q-icon
-                    name="verified_user"
-                    color="blue"
-                    class="col q-ma-md" 
-                    size="200px" 
-                />
-            </template>
-
             <!-- Login -->
             <FormWrapper
                 buttonText="Login"
@@ -77,7 +66,7 @@ import { ref } from 'vue';
 import PageWrapper from 'components/PageWrapper.vue';
 import CardWrapper from 'components/CardWrapper.vue';
 import FormWrapper from 'components/FormWrapper.vue';
-import { setCSRFToken, userLogin } from 'src/apis/auth.js';
+import { userLogin } from 'src/apis/auth.js';
 
 export default {
     name: 'UserLogin',
@@ -85,7 +74,7 @@ export default {
         PageWrapper, CardWrapper, FormWrapper
     },
     emits: [
-        'login'
+        'authorize'
     ],
     setup() {
         return {
@@ -102,37 +91,21 @@ export default {
         };
     },
     methods: {
+
+        // Login User here
+        // Auth User in App.vue
         async loginUser() {
             try {
+                if(!this.login.password || !this.login.email) throw "Please enter credentials."
                 this.loading = true;
-
-                // CSRF Protection
-                await setCSRFToken();
-
-                // Auth User here
-                // Set here Local Session Token
-                const response = await userLogin(this.login);
-                
-                // Set Storage
-                localStorage.setItem(this.$env.SESSION_NAME, 'true');
-
-                // Success
-                this.$toast.success(response.data.message);
-                this.$emit('login'); 
-                 
+                await userLogin(this.login);
+                this.$store.setSession();
+                this.$emit('authorize');
             } catch (error) {
                 const errorMessage = error.response ? error.response : error;
+                // Wrong Credentials
+                // Email_Not_Verified
                 this.$toast.error(errorMessage);
-
-                // Not verified
-                if(errorMessage.data && errorMessage.data.email) {
-                    this.$router.push({
-                        name: 'EmailVerificationRequest',
-                        params: {
-                            email: this.login.email,
-                        }
-                    })
-                }
             } finally {
                 this.loading = false;
                 this.login.password = '';

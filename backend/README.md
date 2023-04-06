@@ -33,3 +33,16 @@
  * Bluemail:    Sending & Tracking emails
  * Github:      Code Management
  * Localhost:   Server & Domain
+
+ # Systemsetup 
+ ## Login
+  Usercredits: admin@admin.com
+  Password: admin
+
+ ## Database
+ ### Migarte
+  > php artisan migrate
+
+ ### Seeding
+  > php artisan db:seed --class=UserSeeder
+  > php artisan db:seed --class=AdminSeeder

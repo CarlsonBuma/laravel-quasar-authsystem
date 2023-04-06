@@ -19,14 +19,14 @@
                     'text-dark': !$q.dark.isActive,
                 }">
                 <NavTopGuest
-                    v-if="!$store.access.logged"
+                    v-if="!$store.access.user"
                     :allowSubNav="true"
                     :allowLeftDrawer="false"
                     @drawerLeft="expandDrawerLeft = !expandDrawerLeft"
                     @login="authUser()" 
                 />
                 <NavTopUser
-                    v-else-if="$store.access.logged"
+                    v-else-if="$store.access.user"
                     :allowLeftDrawer="true"
                     @showDrawerLeft="showDrawerLeft = true"
                     @expandDrawerLeft="expandDrawerLeft = !expandDrawerLeft" 
@@ -35,7 +35,7 @@
 
             <!-- Drawers -->
             <q-drawer
-                v-if="$store.access.logged"
+                v-if="$store.access.user"
                 v-model="showDrawerLeft"
                 :mini="expandDrawerLeft"
                 show-if-above
@@ -54,14 +54,14 @@
                 }"
             >
                 <router-view 
-                    @login="() => authUser()"
-                    @logout="(message) => removeSession(message)"
+                    @authorize="() => authUser()"
+                    @removeSession="(message) => removeSession()"
                 />
             </q-page-container>
 
             <!-- Footer -->
             <q-footer
-                v-if="!$store.access.logged"
+                v-if="!$store.access.user"
                 bordered 
                 :class="{
                     'bg-dark': $q.dark.isActive,
@@ -82,20 +82,23 @@ import NavTopGuest from 'src/layouts/NavTop_Guest.vue';
 import NavTopUser from 'src/layouts/NavTop_User.vue';
 import NavFoot from 'src/layouts/NavFoot.vue';
 import LeftDrawer from 'src/layouts/LeftDrawer.vue';
-import { userAuth, userLogout } from 'src/apis/auth.js';
+import { userAuth, userLogout, setCSRFToken } from 'src/apis/auth.js';
 
 export default {
     name: 'App',
     components: {
         NavTopGuest, NavTopUser, NavFoot, LeftDrawer
     },
-    data() {
+    setup() {
         return {
             showDrawerLeft: ref(false),
             expandDrawerLeft: ref(false),
-        }
+        };
     },
     mounted() {
+        // CSRF - Token
+        this.getCSRFToken();
+
         // Darkmode
         const darkMode = this.$q.dark.isActive;
         this.$q.dark.set(darkMode);
@@ -108,19 +111,25 @@ export default {
     },
     methods: { 
 
+        async getCSRFToken() {
+            await setCSRFToken();
+        },
+
         async authUser() {
+            const sessionSet = localStorage.getItem(this.$env.SESSION_NAME); 
             try {
                 // Check if we can load User-Session
-                const sessionSet = localStorage.getItem(this.$env.SESSION_NAME); 
-                if(sessionSet !== 'true' || this.$store.access.logged) throw 'Please login manually.';
+                if(sessionSet !== 'true' || this.$store.access.user) throw 'Please login manually.';
                 
                 // Set New Session
                 this.$toast.load();
                 const response = await userAuth();
                 this.$store.loginUser(response.data);
+                this.$toast.success('Hi, ' + response.data.name + ".")
                 this.$router.push('/dashboard');
             } catch (error) {
-                this.$router.push('/login');
+                if(sessionSet) this.$toast.error(error.response ? error.response : error)
+                else this.$router.push('/login');
                 console.log(error)
             } finally {
                 this.$toast.loaded();
@@ -132,21 +141,18 @@ export default {
             try {
                 this.$toast.load();
                 const response = await userLogout();
-                this.removeSession(response.data.message);
-                this.$router.push('/');
+                this.$toast.success(response.data.message);
+                this.removeSession();
             } catch (error) {
-                const errorMessage = error.response ? error.response : error;
-                this.$toast.error(errorMessage);
+                this.$toast.error(error.response ? error.response : error);
             } finally {
                 this.$toast.loaded();
             }
         },
 
-        // Remove Session
-        removeSession(message) {
-            localStorage.removeItem(this.$env.SESSION_NAME);
+        removeSession() {
             this.$store.logoutUser();
-            this.$toast.success(message);
+            this.$router.push('/');
         },
 
         showLogs() {

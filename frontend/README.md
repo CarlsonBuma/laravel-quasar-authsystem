@@ -36,8 +36,8 @@
     > Password reset
 
 ## Third-Parties Implementations
-[x] Sortablejs - vue3
-    > https://github.com/MaxLeiter/sortablejs-vue3
+[x] Vue3 Draggable
+    > https://github.com/shkilo/vue3-draggable
     
 [X] Cookie-Consent (GDPR, eg. for Google Analytics)
     > https://github.com/eyecatchup/vue-cookieconsent

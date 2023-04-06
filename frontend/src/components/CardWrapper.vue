@@ -1,10 +1,10 @@
 <!-- Carlson - 30.12.2022 / 0.1.1 -->
 <template>
+
     <q-card 
         bordered
         :style="{
-            width: '100%',
-            maxWidth: cardWidth ? cardWidth : '100%', 
+            maxWidth: cardWidth ? cardWidth : '420px', 
             minWidth: '320px'
         }" 
     >
@@ -22,21 +22,21 @@
 
         <!-- Card Body -->
         <q-card-section>
-            
+
             <!-- Titile -->
             <div
                 v-if="title" 
-                class="flex items-center text-h6 _overflow-hidden"
+                class="flex items-center text-h5 _overflow-hidden"
             >
                 
                 <!-- Navigation: Go back -->
                 <q-btn 
                     v-if="goBack"
-                    @click="$router.go(-1)"
+                    @click="goBack ? $router.go(-1) : ''"
                     flat 
                     round 
-                    text-color="purple" 
-                    icon="arrow_left"
+                    text-color="primary" 
+                    :icon="goBack ? 'arrow_left' : 'arrow_right'"
                 />
 
                 <!-- Tooltip -->
@@ -51,39 +51,38 @@
                     </q-tooltip>
                 </q-icon>
 
-                <!-- Default -->
-                <q-btn 
-                    v-else
-                    flat 
-                    round 
-                    text-color="purple" 
-                    icon="arrow_right" 
-                    label="" 
-                />  
-
                 <!-- Title -->
-                {{ title }}
+               {{ title }}
             </div>
 
-            <!-- Subtitle -->
+            <!-- Description -->
             <p v-if="subtitle" class="q-ml-sm q-mr-sm text-caption _text-break">{{ subtitle }}</p>
             
-            <!-- Header -->
-            <div class="w-100 text-center q-mb-md">
-                <slot name="header" />
+            <!-- Header Icon -->
+            <q-separator class="q-mt-md q-mb-lg" />
+            <div class="flex justify-center">
+                <q-icon
+                    :name="iconHeader"
+                    color="primary" 
+                    size="170px" 
+                />
             </div>
+
+            <!-- Header -->
+            <!-- <div class="w-100 text-center q-mb-md">
+                <slot name="header" />
+            </div> -->
 
             <!-- Body -->
             <q-separator class="q-mt-md q-mb-lg" />
-            
-            <!-- Main -->
             <slot />
-
-            <!-- Bottom Slot -->
             <slot name="bottom_slot" /> 
 
+            <q-separator class="q-mt-md q-mb-md"/>
+            <p class="text-caption q-ml-sm q-mr-sm _text-break"><em>{{ note }}</em></p>
         </q-card-section>
     </q-card>
+    
 </template>
 
 <script>
@@ -91,7 +90,9 @@ export default {
     name: 'PageWrapper',
     props: {
         goBack: Boolean,
+        iconHeader: String,
         title: String,
+        note: String,
         subtitle: String,
         iconClass: String,
         iconColor: String,

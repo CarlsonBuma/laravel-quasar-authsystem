@@ -162,7 +162,7 @@ class UserProfileController extends Controller
      * @param Request $request
      * @return void
      */
-    public function accountTransferRequest(Request $request)
+    public function transferAccount(Request $request)
     {
         try {
 
@@ -179,11 +179,15 @@ class UserProfileController extends Controller
             if(!Hash::check($password, $user->password)) throw new Exception('Ups, the given password is incorrect.');
             
             $verificationMail = new EmailVerificationController;
-            $verificationMail->emailTransferRequest($user, $newEmail);
+            $verificationMail->sendEmailVerification($user, $newEmail);
 
             $userAccount = User::where('id', Auth::id())->first();
             $userAccount->email_verified_at = null;
             $userAccount->save();
+
+            // Logout
+            $userLog = new UserAuthController;
+            $userLog->logoutUser($request);
 
         } catch (Exception $e) {
             return response()->json([
@@ -191,12 +195,8 @@ class UserProfileController extends Controller
             ], 422);
         }
 
-        // Logout
-        $userLog = new UserAuthController;
-        $userLog->logoutUser($request);
-
         return response()->json([
-            'message' => 'The account has been transfered. The verification key has been sent to the new mail.',
+            'message' => 'Transfering user in progress...',
         ], 200);
     }
 

@@ -2,7 +2,7 @@ import { boot } from 'quasar/wrappers';
 import userStore from "src/stores/storeUser.js";
 import CookieConsent from 'vue-cookieconsent';
 import CookieConsentOptions from 'src/modules/cookieConsent';
-import loadToast from 'src/modules/toast';
+import responseHandling from 'src/modules/responseHandling';
 
 export default boot(({ app, router }) => {
     
@@ -19,7 +19,7 @@ export default boot(({ app, router }) => {
     app.config.globalProperties.$store = userStore();
 
     // Load Toaster
-    app.config.globalProperties.$toast = loadToast(router);
+    app.config.globalProperties.$toast = responseHandling(router);
 
     /* 
      * Cookie-Consent accessible by this.$cc

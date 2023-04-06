@@ -2,6 +2,22 @@
 Gigup-Solution - v1.0.1 / 08.01.2023
 by Carlson
 
+## Current Version:
+full-auth-system - v1.0.0
+
+## System Details
+ - Full Stack Auth System, v1.0.0
+    - Login, Logout
+    - Register, Email verification, 
+    - Reset password
+    - Transfer Email
+    - User Profile
+ - Guest
+    - Legal & Compliance
+ - Globals
+    - Cookie Consent (cookieConsent.js)
+    - Request Handling (Toast.js)
+
 ## Current Bugs: 08.01.2023
  1. Auth System: Transfer Account (simple?)
  2. Avatar Path to Server: CORS error

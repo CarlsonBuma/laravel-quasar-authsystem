@@ -3,6 +3,7 @@ import { createRouter, createMemoryHistory, createWebHistory, createWebHashHisto
 import routesAuth from './routes/auth';
 import routesGuest from './routes/guest';
 import routesUser from './routes/user';
+import routesBackpanel from './routes/backpanel';
 
 export default route(function (/* { store, ssrContext } */) {
     const createHistory = process.env.SERVER
@@ -21,6 +22,7 @@ export default route(function (/* { store, ssrContext } */) {
     routes.push(...routesGuest)
     routes.push(...routesAuth);
     routes.push(...routesUser);
+    routes.push(...routesBackpanel);
 
     const Router = createRouter({
         scrollBehavior: () => ({ left: 0, top: 0 }),

@@ -101,11 +101,13 @@
             cardWidth="400px"
         >
             <template #tooltip>
-                Make sure to change the password, so the new owner is able to login.
+                Transfer your account to another user.<br> 
+                <em>*To undo your transfer process, login with your old credentials &amp;<br>
+                verify your email again.</em>
             </template>
 
             <FormWrapper
-                buttonText="Change email"
+                buttonText="Change owner"
                 buttonIcon="email"
                 :loading="loading['email']"
                 @submit="submitEmail()"
@@ -114,13 +116,13 @@
                     filled
                     disable
                     v-model="$store.user.email"
-                    label="Current Owner"
+                    label="Current owner"
                 />
 
                 <q-input
                     filled
                     v-model="transferEmail"
-                    label="Transfer Owner"
+                    label="Transfer account"
                     placeholder="Enter email"
                 />
 
@@ -134,9 +136,8 @@
 
             <!-- Message -->
             <BannerNote
-                note="*Meanwhile the transfer is in progress, the new owner must verify it's email by the verification - link sent to him. 
-                    In case of undo your transfer, you can verify your old email again, by login with your old credentials.
-                    This is available until the new owner verifies his account."
+                note="The new owner has to verify the new account, by the verification link sent to the provided email. 
+                    You will have no access to this account anymore!"
             />
         </CardWrapper>
         
@@ -245,7 +246,7 @@ import CardWrapper from 'components/CardWrapper.vue';
 import BannerNote from 'src/components/BannerNote.vue';
 import FormWrapper from 'components/FormWrapper.vue';
 import { passwordRequirements, regRules } from 'src/modules/globals.js';
-import { changeAvatar, changeName, changeEmailRequest, changePassword, deleteUser } from 'src/apis/auth.js';
+import { changeAvatar, changeName, transferAccount, changePassword, deleteUser } from 'src/apis/auth.js';
 
 export default {
     name: 'UserAccountSettings',
@@ -254,7 +255,7 @@ export default {
     },
     
     emits: [
-        'logout'
+        'removeSession'
     ],
 
     setup() {
@@ -320,10 +321,9 @@ export default {
                 if(!this.regRulesEmail.test(this.transferEmail)) throw ('Please enter valid email.');
                 if(!this.emailPassword) return;
                 this.loading['email'] = this.$toast.load();
-                const response = await changeEmailRequest(this.transferEmail, this.emailPassword);
+                const response = await transferAccount(this.transferEmail, this.emailPassword);
                 this.$toast.success(response.data.message);
-                this.$emit('logout', response.data.message);
-                this.$router.push('/');
+                this.$emit('removeSession');
             } catch (error) {
                 const errorMessage = error.response ? error.response : error;
                 this.$toast.error(errorMessage);
@@ -354,8 +354,8 @@ export default {
             try {
                 this.loading['delete'] = this.$toast.load();
                 const response = await deleteUser(this.deletePassword);
-                this.$emit('logout', response.data.message);
-                this.$router.push('/');
+                this.$toast.success(response.data.message);
+                this.$emit('removeSession');
             } catch (error) {
                 const errorMessage = error.response ? error.response : error;
                 this.$toast.error(errorMessage);

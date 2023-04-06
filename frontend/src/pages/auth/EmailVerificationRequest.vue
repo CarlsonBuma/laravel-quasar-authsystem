@@ -1,22 +1,16 @@
 <template>
 
-    <PageWrapper>
+    <PageWrapper :rendering="this.loading">
+
+        <!-- http://localhost:9000/#/email-verification-request/patrick.carl.ammann@gmail.com -->
         <CardWrapper
             :goBack="true"
             :allowHeader="true"
-            cardWidth="520px"
-            class="q-mb-md"
             title="Email verification"
+            iconHeader="verified"
+            note="*The verification link will be sent to the provided email."
+            class="q-mb-md"
         >
-            <template #header>
-                <q-icon
-                    name="verified"
-                    color="blue"
-                    class="col q-ma-md" 
-                    size="200px" 
-                />
-            </template>
-            
             <q-input
                 filled
                 type="email"
@@ -31,21 +25,13 @@
             
             <!-- Submit Request -->
             <div class="flex items-center justify-end">
-                <ButtonSubmit 
-                    class="q-ma-sm" 
+                <ButtonSubmit
                     :loading="loading"
-                    :disable="bannerType === 'success'"
-                    buttonText="Send verification key"
+                    buttonText="Send Token"
                     @submit="sendEmailVerification()"
+                    class="q-mt-md"
                 />
             </div>
-            
-            <!-- Message -->
-            <BannerNote
-                :bannerType="bannerType"
-                :text="message"
-                note="*After the verification link has been sent to your email, you are able to verify your account."
-            />
         </CardWrapper>
     </PageWrapper>
 
@@ -56,18 +42,16 @@ import { ref } from 'vue';
 import PageWrapper from 'components/PageWrapper.vue';
 import CardWrapper from 'components/CardWrapper.vue';
 import ButtonSubmit from 'src/components/ButtonSubmit.vue';
-import BannerNote from 'src/components/BannerNote.vue';
 import { emailVerificationRequest } from 'src/apis/auth.js';
 
 export default {
     name: 'EmailVerificationRequest',
     components: {
-        PageWrapper, CardWrapper, ButtonSubmit, BannerNote
+        PageWrapper, CardWrapper, ButtonSubmit
     },
     setup() {
         return {
             loading: ref(false),
-            bannerType: ref(''),        // 'loading', 'success', 'error'
             message: ref(''),
         };
     },
@@ -82,15 +66,12 @@ export default {
          */
         async sendEmailVerification() {
             try {
-                this.bannerType = '';
                 this.loading = true;
                 const response = await emailVerificationRequest(this.email);
-                this.bannerType = "success"
                 this.message = this.$toast.success(response.data.message);
+                this.$router.push('/')
             } catch (error) {
-                const errorMessage = error.response ? error.response : error;
-                this.message = this.$toast.error(errorMessage);
-                this.bannerType = "error"
+                this.message = this.$toast.error(error.response ? error.response : error);
             } finally {
                 this.loading = false;
             }

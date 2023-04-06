@@ -1,22 +1,11 @@
 /* Carlson - 30.12.2022 - v.0.0.1 */
+'use strict';
 import { Notify } from 'quasar';
-import store from "src/stores/storeUser.js";
+import errorHandling from "src/modules/errorHandling.js";
 
-/** Customizing Server-Response */
-const errorHandling = (serverResponse, router) => {
-    
-    // Handle Custom Error here
-    // Not authenticated
-    if(serverResponse.status === 401) {
-        store().logoutUser();
-        router.push('login');
-        throw 'Hmm, not authenticaded. Please login again.'
-    }
-}
-
-/** Boot: Load Toast */
-const loadToast = (router) => {
-    return new Toaster(router);
+/** Boot: Load Handler */
+const responseHandling = (router) => {
+    return new ResponseHandler(router);
 }
 
 /*
@@ -26,11 +15,10 @@ const loadToast = (router) => {
  *  > Error
  *      > Manage Error Status
  */
-class Toaster {
+class ResponseHandler {
     constructor(router) {
         this.message = '';
         this.router = router;
-        this.store = store();
         this.progressBar = null;
         this.notify = null;
         this.position = 'top-right';
@@ -118,4 +106,4 @@ class Toaster {
     }
 }
 
-export default loadToast;
+export default responseHandling;

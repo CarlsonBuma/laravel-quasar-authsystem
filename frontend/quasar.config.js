@@ -59,14 +59,16 @@ module.exports = configure(function (/* ctx */) {
         framework: {
             config: {
                 dark: 'auto',
-                notify: { /* look at QuasarConfOptions from the API card */ }
+                notify: { /* look at QuasarConfOptions from the API card */ },
+                loading: { /* look at QuasarConfOptions from the API card */ }
             },
             // iconSet: 'material-icons', // Quasar icon set
             // lang: 'en-US', // Quasar language pack
             // components: [],
             // directives: [],
             plugins: [
-                'Notify'
+                'Notify',
+                'Loading'
             ]
         },
 

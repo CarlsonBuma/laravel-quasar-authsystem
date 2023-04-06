@@ -3,20 +3,9 @@
     <PageWrapper>
         <CardWrapper
             :goBack="true"
-            :allowHeader="true"
-            cardWidth="400px"
-            class="q-mb-md"
             title="Terms &amp; Conditions"
+            iconHeader="description"
         >
-            <!-- User Avatar -->
-            <template #head>
-                <q-icon
-                    name="description"
-                    color="blue"
-                    class="col q-ma-md" 
-                    size="220px" 
-                />
-            </template>
 
             <!-- Content -->
             Im Terms &amp; Conditions
