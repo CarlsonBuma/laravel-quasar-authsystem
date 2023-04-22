@@ -4,6 +4,7 @@
     <q-card 
         bordered
         :style="{
+            width: '100%',
             maxWidth: cardWidth ? cardWidth : '420px', 
             minWidth: '320px'
         }" 

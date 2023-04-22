@@ -3,21 +3,9 @@
     <PageWrapper>
         <CardWrapper
             :goBack="true"
-            :allowHeader="true"
-            cardWidth="400px"
-            class="q-mb-md"
             title="Kontakt"
+            iconHeader="support_agent"
         >
-            <!-- User Avatar -->
-            <template #head>
-                <q-icon
-                    name="support_agent"
-                    color="blue"
-                    class="col q-ma-md" 
-                    size="220px" 
-                />
-            </template>
-
             <!-- Content -->
             Im Contact
 

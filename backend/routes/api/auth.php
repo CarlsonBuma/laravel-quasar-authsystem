@@ -26,14 +26,6 @@ Route::post('/login', [UserAuthController::class, 'loginUser'])
     ->middleware(['throttle:6,1'])    
     ->name('login');
 
-Route::get('/auth', [UserAuthController::class, 'authUser'])
-    ->middleware(['auth:sanctum', 'email_verified'])
-    ->name('auth');
-
-Route::post('/logout', [UserAuthController::class, 'logoutUser'])
-    ->middleware(['auth:sanctum', 'email_verified'])
-    ->name('logout'); 
-
 // Create Account
 Route::post('/create-account', [RegisterController::class, 'register'])
     ->name('create.account');
@@ -69,8 +61,16 @@ Route::put('/transfer-account/{email}/{token}/{transfer}', [TransferAccountContr
  *      > Verify transfer
  *  > delete Account
  */
-Route::middleware(['auth:sanctum', 'email_verified'])->group(function () {
-    
+Route::middleware(['auth:api', 'email_verified'])->group(function () {
+
+    // Auth
+    Route::get('/auth', [UserAuthController::class, 'authUser'])
+        ->name('auth');
+
+    // Logout
+    Route::post('/logout', [UserAuthController::class, 'logoutUser'])
+        ->name('logout'); 
+        
     // User Profile
     Route::post('/user-change-avatar', [UserProfileController::class, 'changeAvatar'])
         ->name('user.change.avatar');

@@ -14,13 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// USER - ACOUNT Management
 require __DIR__.'/api/auth.php';
 require __DIR__.'/api/admin.php';
-
-// User Routes
-Route::middleware(['auth:sanctum', 'email_verified'])->group(function () {
-
-    // Implement User Routes
-     
-});

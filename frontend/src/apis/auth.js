@@ -17,7 +17,6 @@ const userLogin = (credentials) => {
     return axios.post("/login", {
         'email': credentials.email,
         'password': credentials.password,
-        'remember': credentials.remember,
     });
 }
 

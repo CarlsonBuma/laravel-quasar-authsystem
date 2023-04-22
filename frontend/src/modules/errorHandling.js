@@ -10,7 +10,7 @@ const errorHandling = (serverResponse, router) => {
     // Handle Custom Error here
     // Redirect User to Verify Email
     if(serverResponse.status === 401 && serverResponse.data.status === 'email_not_verified') {
-        store().logoutUser();
+        store().removeSession();
         router.push({
             name: 'EmailVerificationRequest', 
             params: { 
@@ -28,7 +28,7 @@ const errorHandling = (serverResponse, router) => {
 
     // Not authenticated
     else if(serverResponse.status === 401) {
-        store().logoutUser();
+        store().removeSession();
         router.push('/login');
         throw serverResponse.data.message ? serverResponse.data.message : 'Hmm, some error occured. Please try again.'
     }

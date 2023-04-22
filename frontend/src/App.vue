@@ -96,8 +96,8 @@ export default {
         };
     },
     mounted() {
-        // CSRF - Token
-        this.getCSRFToken();
+        // CSRF - Token - needed JWT?
+        // this.getCSRFToken();
 
         // Darkmode
         const darkMode = this.$q.dark.isActive;
@@ -112,31 +112,30 @@ export default {
     methods: { 
 
         async getCSRFToken() {
+            console.log(this.$axios.defaults.headers.common)
+            console.log(localStorage)
             await setCSRFToken();
         },
 
         async authUser() {
-            const sessionSet = localStorage.getItem(this.$env.SESSION_NAME); 
             try {
-                // Check if we can load User-Session
-                if(sessionSet !== 'true' || this.$store.access.user) throw 'Please login manually.';
-                
-                // Set New Session
+                // Session Storage
+                // Bearer Token - OAuth2
+                if(!this.$store.setSession()) throw 'No token set.';
                 this.$toast.load();
                 const response = await userAuth();
-                this.$store.loginUser(response.data);
-                this.$toast.success('Hi, ' + response.data.name + ".")
+                this.$store.setUser(response.data);
                 this.$router.push('/dashboard');
+                this.$toast.success('Session started');
             } catch (error) {
-                if(sessionSet) this.$toast.error(error.response ? error.response : error)
+                if(error.response) this.$toast.error(error.response)
                 else this.$router.push('/login');
-                console.log(error)
+                console.log(error);
             } finally {
                 this.$toast.loaded();
             }
         },
 
-        // Logout & Remove Session
         async logoutUser() {
             try {
                 this.$toast.load();
@@ -151,7 +150,7 @@ export default {
         },
 
         removeSession() {
-            this.$store.logoutUser();
+            this.$store.removeSession(this.$env.SESSION_NAME);
             this.$router.push('/');
         },
 

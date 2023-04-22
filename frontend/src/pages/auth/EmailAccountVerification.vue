@@ -74,6 +74,7 @@ export default {
                 this.$toast.success(response.data.message);
                 this.$router.push('/login');
             } catch (error) {
+                if(error.response) this.$router.push('/')
                 this.message = this.$toast.error(error.response ? error.response : error);
             } finally {
                 this.loading = false;

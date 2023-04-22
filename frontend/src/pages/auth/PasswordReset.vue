@@ -3,7 +3,6 @@
     <PageWrapper :rendering="loading">
         <CardWrapper
             :goBack="true"
-            :allowHeader="true"
             title="Set new password"
             iconHeader="lock_person"
             note="*You are able to change your password now. Afterwards, you are able to login with your new password."
@@ -88,17 +87,17 @@ export default {
 
         async setUserPassword(password, password_confirm) {
             try {
-                this.resetPw = false;
                 this.loading = true;
                 passwordRequirements(password, password_confirm);
                 const response = await passwordReset(this.$route.fullPath, password, password_confirm);
                 this.$toast.success(response.data.message);
                 this.$router.push('/login');
+                this.resetPw = true;
             } catch (error) {
                 if(error.response) this.$router.push('/')
                 this.message = this.$toast.error(error.response ? error.response : error);
             } finally {
-                this.resetPw = true;
+                this.resetPw = false;
                 this.loading = false;
             }
         },

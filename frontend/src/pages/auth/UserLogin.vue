@@ -26,8 +26,6 @@
                     v-model="login.password"
                     label="Enter password"
                 />
-
-                <q-checkbox v-model="login.remember" label="Remember me" />
             </FormWrapper>
 
             <!-- Auth -->
@@ -86,7 +84,6 @@ export default {
             login: {
                 email: '',
                 password: '',
-                remember: false,
             }
         };
     },
@@ -98,13 +95,12 @@ export default {
             try {
                 if(!this.login.password || !this.login.email) throw "Please enter credentials."
                 this.loading = true;
-                await userLogin(this.login);
-                this.$store.setSession();
+                const response = await userLogin(this.login);
+                this.$store.createSession(response.data.token);
                 this.$emit('authorize');
             } catch (error) {
                 const errorMessage = error.response ? error.response : error;
-                // Wrong Credentials
-                // Email_Not_Verified
+                // Wrong Credentials && Email_Not_Verified
                 this.$toast.error(errorMessage);
             } finally {
                 this.loading = false;

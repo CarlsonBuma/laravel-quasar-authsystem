@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class UserAuthController extends Controller
 {
-    private $emailVerified = false;
-
     /**
      ** Get User Data
      **     > User Credentials
@@ -21,7 +19,8 @@ class UserAuthController extends Controller
     public function authUser()
     {
         $user = Auth::user();
-        $isAdmin = Auth::user()->is_admin->exists();
+        $isAdmin = Auth::user()->is_admin;
+
         $avatarPath = $user->avatar
             ? asset(public_path('avatar') . '/' . $user->avatar)
             : '';
@@ -32,7 +31,7 @@ class UserAuthController extends Controller
             'avatar' => $avatarPath,
             'email' => $user->email,
             'role' => 'owner',
-            'is_admin' => $isAdmin
+            'is_admin' => $isAdmin ? true : false
         ], 200);
     }
 
@@ -51,23 +50,20 @@ class UserAuthController extends Controller
             $credentials = $request->validate([
                 'email' => ['required', 'email'],
                 'password' => ['required'],
-                'remember' => ['required', 'boolean']
             ]);
 
-            // Authorize User
+            // Check Credentials
             if (Auth::attempt([
                     'email' => $credentials['email'],
-                    'password' => $credentials['password'],
-                ], $credentials['remember']
+                    'password' => $credentials['password']
+                ]
             )){
-                // Check if Email is verified
+                // Login if verified
                 if(Auth::user()->email_verified_at) {
-                    $user = Auth::user();
-                    $request->session()->regenerate();
+                    $token = Auth::user()->createToken('Baerer_')->accessToken;
                     return response()->json([
-                        'message' => 'Hi ' . $user->name . ', you logged in successfully.',
-                        'success' => true,
-                        'email' => false
+                        'token' => $token,
+                        'message' => 'Session started.'
                     ], 200);
                 } else {
                     return response()->json([
@@ -98,16 +94,15 @@ class UserAuthController extends Controller
     public function logoutUser(Request $request)
     {
         try {
-            Auth::guard('web')->logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+            // We want to delete Token instead of revoke
+            Auth::user()->token()->delete();
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
             ], 400);
         }
         return response()->json([
-            'message' => 'Logged out. See you soon.'
+            'message' => 'Session removed.'
         ], 200);
     }
 }
