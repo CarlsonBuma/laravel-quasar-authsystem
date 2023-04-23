@@ -5,7 +5,6 @@ import axios from 'axios';
 const userStore = defineStore({
     id: "user",
     state: () => ({
-        accessToken: localStorage.getItem(process.env.SESSION_NAME),
         access: {
             user: false,
             admin: false,
@@ -46,8 +45,12 @@ const userStore = defineStore({
         },
 
         setSession() {
+            // Check Header Set
             const token = localStorage.getItem(process.env.SESSION_NAME);
             if(!token) return false;
+            if(axios.defaults.headers.common['Authorization']) return true;
+
+            // Set Header
             axios.interceptors.request.use((config) => {
                 config.headers["Authorization"] = `Bearer ${token}`
                 return config;

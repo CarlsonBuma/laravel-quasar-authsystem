@@ -14,10 +14,11 @@ const regRules = {
 };
 
 const passwordRequirements = (password, password_confirm) => {
-    if (!regRules.passwordPattern.min_length.test(password)) throw 'Password must contain more than 7 characters.'
-    else if (!regRules.passwordPattern.capital_letter.test(password)) throw 'Password must contain 1 capital letter.'
-    else if (!regRules.passwordPattern.number.test(password)) throw 'Password must contain 1 number.';
-    else if(!password_confirm || password !== password_confirm) throw 'Password does not match.'
+    if (!regRules.passwordPattern.min_length.test(password)) return 'Password must contain more than 7 characters.'
+    else if (!regRules.passwordPattern.capital_letter.test(password)) return 'Password must contain 1 capital letter.'
+    else if (!regRules.passwordPattern.number.test(password)) return 'Password must contain 1 number.';
+    else if(!password_confirm || password !== password_confirm) return 'Password does not match.'
+    return '';
 }
 
 export {

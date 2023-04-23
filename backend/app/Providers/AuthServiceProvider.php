@@ -27,6 +27,6 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
         Passport::hashClientSecrets();
-        Passport::cookie(env('SESSION_DRIVER', 'bearer'));
+        // Passport::cookie(env('SESSION_DRIVER', 'bearer'));
     }
 }

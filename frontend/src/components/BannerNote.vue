@@ -27,7 +27,7 @@
             </div>
         </q-banner>
 
-        <p v-else class="text-caption q-ml-sm q-mr-sm _text-break"><em>{{ note }}</em></p>
+        <p v-else class="text-caption q-ml-sm q-mr-sm"><em>{{ note }}</em></p>
     </div>
 </template>
 

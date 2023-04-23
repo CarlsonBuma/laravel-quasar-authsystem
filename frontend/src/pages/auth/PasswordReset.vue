@@ -32,20 +32,47 @@
             
             <!-- Set Password -->
             <q-separator class="q-mt-lg"/>
-            <SetPassword
-                :reset="resetPw"
-                @input="(pw, pw_confirm) => {
-                    this.password = pw;
-                    this.password_confirm = pw_confirm;
-                }"
-            />
+            <div>
+                <q-input
+                    filled
+                    type="password"
+                    v-model="password"
+                    label="Enter password"
+                >
+                    <!-- Icon -->
+                    <template v-slot:prepend>
+                        <q-icon name="lock" />
+                    </template>
+                    <!-- Validation -->
+                    <template v-slot:append>
+                        <q-icon name="info">
+                            <q-tooltip>
+                                <PasswordCheck
+                                    :password="password"
+                                    :password_confirm="password_confirm"
+                                />
+                            </q-tooltip>
+                        </q-icon>
+                    </template>
+                </q-input>
+                <q-input
+                    filled
+                    type="password"
+                    v-model="password_confirm"
+                    label="Confirm password"
+                >
+                    <template v-slot:prepend>
+                        <q-icon name="lock" />
+                    </template>
+                </q-input>
+            </div>
 
             <!-- Submit -->
             <div class="flex items-center justify-end">
                 <ButtonSubmit 
                     :loading="loading"
                     buttonText="Set password"
-                    @submit="setUserPassword(this.password, this.password_confirm)"
+                    @submit="setUserPassword(password, password_confirm)"
                     class="q-mt-md"
                 />
             </div>
@@ -59,20 +86,19 @@ import { ref } from 'vue';
 import PageWrapper from 'components/PageWrapper.vue';
 import CardWrapper from 'components/CardWrapper.vue';
 import ButtonSubmit from 'src/components/ButtonSubmit.vue';
-import SetPassword from 'src/components/SetPassword.vue';
+import PasswordCheck from 'components/PasswordCheck.vue';
 import { passwordReset } from 'src/apis/auth.js';
-import { passwordRequirements, regRules } from 'src/modules/globals.js';
+import { passwordRequirements } from 'src/modules/globals.js';
 
 export default {
     name: 'PasswordSet',
     components: {
-        PageWrapper, CardWrapper, ButtonSubmit, SetPassword
+        PageWrapper, CardWrapper, ButtonSubmit, PasswordCheck
     },
     setup() {
         return {
             loading: ref(false),
             resetPw: ref(false),
-            regRulesPassword: regRules.passwordPattern
         };
     },
     data() {
@@ -87,17 +113,16 @@ export default {
 
         async setUserPassword(password, password_confirm) {
             try {
+                const passwordCheck = passwordRequirements(password, password_confirm);
+                if(passwordCheck) throw passwordCheck;
                 this.loading = true;
-                passwordRequirements(password, password_confirm);
                 const response = await passwordReset(this.$route.fullPath, password, password_confirm);
                 this.$toast.success(response.data.message);
                 this.$router.push('/login');
-                this.resetPw = true;
             } catch (error) {
                 if(error.response) this.$router.push('/')
-                this.message = this.$toast.error(error.response ? error.response : error);
+                this.$toast.error(error.response ? error.response : error);
             } finally {
-                this.resetPw = false;
                 this.loading = false;
             }
         },

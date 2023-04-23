@@ -129,8 +129,7 @@ export default {
                 this.$toast.success('Session started');
             } catch (error) {
                 if(error.response) this.$toast.error(error.response)
-                else this.$router.push('/login');
-                console.log(error);
+                this.$router.push('/login');
             } finally {
                 this.$toast.loaded();
             }

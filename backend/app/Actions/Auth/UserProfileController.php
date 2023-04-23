@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Actions\Auth\UserAuthController;
-use App\Actions\Auth\EmailVerificationController;
 
 class UserProfileController extends Controller
 {
@@ -152,51 +151,6 @@ class UserProfileController extends Controller
 
         return response()->json([
             'message' => 'Success! Your password has been changed.',
-        ], 200);
-    }
-
-    /**
-     ** Transfer Account to new Emailadress
-     **  > Before changing email, user has to verify his new email adress
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function transferAccount(Request $request)
-    {
-        try {
-
-            // Requirements & Unique Email
-            $data = $request->validate([
-                'email' => ['required', 'string', 'email', 'unique:users', 'max:255'],
-                'password' => ['required', 'string', 'max:255'],
-            ]);
-            
-            $newEmail = $data['email'];
-            $password = $data['password'];
-
-            $user = Auth::user();
-            if(!Hash::check($password, $user->password)) throw new Exception('Ups, the given password is incorrect.');
-            
-            $verificationMail = new EmailVerificationController;
-            $verificationMail->sendEmailVerification($user, $newEmail);
-
-            $userAccount = User::where('id', Auth::id())->first();
-            $userAccount->email_verified_at = null;
-            $userAccount->save();
-
-            // Logout
-            $userLog = new UserAuthController;
-            $userLog->logoutUser($request);
-
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 422);
-        }
-
-        return response()->json([
-            'message' => 'Transfering user in progress...',
         ], 200);
     }
 

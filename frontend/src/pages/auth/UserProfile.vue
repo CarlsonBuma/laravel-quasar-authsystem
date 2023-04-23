@@ -1,14 +1,9 @@
-<style scoped>
-.extra-margin {
-    padding-bottom: 80px;
-}
-</style>
-
 <template>
 
     <PageWrapper 
         title="My Profile" 
         :directory="directory"
+        :rendering="loading"
     >
         <CardWrapper
             cardWidth="400px"
@@ -80,7 +75,6 @@
             <FormWrapper
                 buttonText="Change name"
                 buttonIcon="person"
-                :loading="loading['name']"
                 @submit="submitUsername()"
             >
                 <q-input
@@ -89,10 +83,55 @@
                     label="Username"
                 />
             </FormWrapper>
-           
         </CardWrapper>
 
-        <!-- UserEmail -->
+        <!-- UserPassword -->
+        <CardWrapper
+            title="Change Password"
+            cardWidth="400px"
+            class="q-ma-sm"
+        >
+            <FormWrapper
+                buttonText="Change password"
+                buttonIcon="lock"
+                @submit="submitPassword(password.current, password.new, password.confirm)"
+            >
+                <q-input
+                    filled
+                    type="password"
+                    v-model="password.current"
+                    label="Confirm current password"
+                />
+                <div>
+                    <q-input
+                        filled
+                        type="password"
+                        v-model="password.new"
+                        label="Enter new password"
+                    >
+                        <!-- Validation -->
+                        <template v-slot:append>
+                            <q-icon name="info">
+                                <q-tooltip>
+                                    <PasswordCheck
+                                        :password="password.new"
+                                        :password_confirm="password.confirm"
+                                    />
+                                </q-tooltip>
+                            </q-icon>
+                        </template>
+                    </q-input>
+                    <q-input
+                        filled
+                        type="password"
+                        v-model="password.confirm"
+                        label="Confirm new password"
+                    />
+                </div>
+            </FormWrapper>
+        </CardWrapper>
+
+        <!-- Transfer Account -->
         <CardWrapper
             title="Transfer Account"
             iconClass="info"
@@ -101,15 +140,14 @@
             cardWidth="400px"
         >
             <template #tooltip>
-                Transfer your account to another user.<br> 
-                <em>*To undo your transfer process, login with your old credentials &amp;<br>
-                verify your email again.</em>
+                Transfer your account to another user. 
+                This user, must verify it's email again.<br>
+                After successfull verification your email will be updated. 
             </template>
 
             <FormWrapper
                 buttonText="Change owner"
-                buttonIcon="email"
-                :loading="loading['email']"
+                buttonIcon="people_alt"
                 @submit="submitEmail()"
             >
                 <q-input
@@ -122,7 +160,7 @@
                 <q-input
                     filled
                     v-model="transferEmail"
-                    label="Transfer account"
+                    label="Transfer account to"
                     placeholder="Enter email"
                 />
 
@@ -136,71 +174,8 @@
 
             <!-- Message -->
             <BannerNote
-                note="The new owner has to verify the new account, by the verification link sent to the provided email. 
-                    You will have no access to this account anymore!"
+                note="*To interrupt your transferring process, please login with your current credentials and follow the procedure."
             />
-        </CardWrapper>
-        
-
-        <!-- UserPassword -->
-        <CardWrapper
-            title="Change Password"
-            cardWidth="400px"
-            class="q-ma-sm"
-        >
-            <FormWrapper
-                buttonText="Change password"
-                buttonIcon="password"
-                :loading="loading['password']"
-                @submit="submitPassword()"
-            >
-                <q-input
-                    filled
-                    type="password"
-                    v-model="password.current"
-                    label="Confirm by password"
-                />
-                <!-- Password -->
-                <q-input
-                    filled
-                    type="password"
-                    v-model="password.new"
-                    label="Enter new password"
-                    bottom-slots
-                    class="extra-margin"
-                >
-                    <template v-slot:hint>
-                        <div>
-                            <p class="flex items-center align-center">
-                                <q-icon 
-                                    :name="passwordPattern.min_length.test(password.new) ? 'check_circle_outline' : 'highlight_off'" 
-                                    :color="passwordPattern.min_length.test(password.new) ? 'green' : 'orange'"
-                                />&nbsp;At least 7 characters
-                            </p>
-                            <p class="flex items-center align-center">
-                                <q-icon 
-                                    :name="passwordPattern.capital_letter.test(password.new) ? 'check_circle_outline' : 'highlight_off'" 
-                                    :color="passwordPattern.capital_letter.test(password.new) ? 'green' : 'orange'"
-                                />&nbsp;1 capital letter
-                            </p> 
-                            <p class="flex items-center align-center">
-                                <q-icon 
-                                    :name="passwordPattern.number.test(password.new) ? 'check_circle_outline' : 'highlight_off'" 
-                                    :color="passwordPattern.number.test(password.new) ? 'green' : 'orange'"
-                                />&nbsp;1 number
-                            </p>
-                        </div>
-                        
-                    </template>
-                </q-input>
-                <q-space class="xtra-space" />
-                <q-input
-                    filled
-                    type="password"
-                    v-model="password.confirm"
-                    label="Confirm new password"
-                />
-            </FormWrapper>
         </CardWrapper>
 
         <!-- Delete Account -->
@@ -219,7 +194,6 @@
                 buttonText="Delete account"
                 buttonIcon="delete"
                 buttonColor="red"
-                :loading="loading['delete']"
                 @submit="deleteAccount()"
             >
                 <q-input
@@ -232,7 +206,7 @@
 
             <!-- Message -->
             <BannerNote
-                note="*After deleting, all of your data is removed form our system.  "
+                note="*After deleting, all of your data is removed form our system."
             />
         </CardWrapper>
     </PageWrapper>
@@ -244,6 +218,7 @@ import { ref } from 'vue';
 import PageWrapper from 'components/PageWrapper.vue';
 import CardWrapper from 'components/CardWrapper.vue';
 import BannerNote from 'src/components/BannerNote.vue';
+import PasswordCheck from 'components/PasswordCheck.vue';
 import FormWrapper from 'components/FormWrapper.vue';
 import { passwordRequirements, regRules } from 'src/modules/globals.js';
 import { changeAvatar, changeName, transferAccount, changePassword, deleteUser } from 'src/apis/auth.js';
@@ -251,7 +226,7 @@ import { changeAvatar, changeName, transferAccount, changePassword, deleteUser }
 export default {
     name: 'UserAccountSettings',
     components: {
-        PageWrapper, CardWrapper, BannerNote, FormWrapper
+        PageWrapper, CardWrapper, BannerNote, FormWrapper, PasswordCheck
     },
     
     emits: [
@@ -261,15 +236,8 @@ export default {
     setup() {
         return {
             errorMessage: '',
-            passwordPattern: regRules.passwordPattern,
+            loading: ref(false),
             regRulesEmail: regRules.email,
-            loading: ref({
-                'name': false,
-                'email': false,
-                'password': false,
-                'delete': false,
-                'avatar': false
-            }),
             directory: [{
                 label: 'Home',
                 redirect: '/dashboard'
@@ -290,10 +258,10 @@ export default {
             password: {
                 current: '',
                 new: '',
-                confirm: '',
+                confirm: ''
             },
-            transferEmail: '',
             emailPassword: '',
+            transferEmail: '',
             deletePassword: ''
         };
     },
@@ -302,48 +270,48 @@ export default {
          * Credentials
          */
         async submitUsername() {
-            console.log('PathAvatar', this.$store.user.avatar)
             try {
                 if(this.$store.user.name.length === 0) throw ('Please enter name.');
-                this.loading['name'] = this.$toast.load();
+                this.loading = true;
                 const response = await changeName(this.$store.user.name);
                 this.$toast.success(response.data.message);
             } catch (error) {
                 const errorMessage = error.response ? error.response : error;
                 this.$toast.error(errorMessage);
             } finally {
-                this.loading['name'] = false;
+                this.loading = false;
             }
         },
         
         async submitEmail() {
             try {
-                if(!this.regRulesEmail.test(this.transferEmail)) throw ('Please enter valid email.');
-                if(!this.emailPassword) return;
-                this.loading['email'] = this.$toast.load();
+                if(!this.regRulesEmail.test(this.transferEmail)) throw 'Please enter valid email.';
+                if(!this.emailPassword) throw 'Please cofirm by password.';
+                this.loading = true;
                 const response = await transferAccount(this.transferEmail, this.emailPassword);
                 this.$toast.success(response.data.message);
                 this.$emit('removeSession');
             } catch (error) {
-                const errorMessage = error.response ? error.response : error;
-                this.$toast.error(errorMessage);
+                this.$toast.error(error.response ? error.response : error);
             } finally {
-                this.loading['email'] = false;
+                this.loading = false;
                 this.emailPassword = '';
             }
         },
 
-        async submitPassword() {
+        async submitPassword(current, newPw, confirmed) {
             try {
-                this.loading['password'] = this.$toast.load();
-                passwordRequirements(this.password.new);
-                const response = await changePassword(this.password.current, this.password.new, this.password.confirm)
+                if(!current) throw 'Please enter new password.';
+                const passwordCheck = passwordRequirements(newPw, confirmed);
+                if(passwordCheck) throw passwordCheck;
+                this.loading = true;
+                const response = await changePassword(current, newPw, confirmed)
                 this.$toast.success(response.data.message)
             } catch (error) {
                 const errorMessage = error.response ? error.response : error;
-                this.message = this.$toast.error(errorMessage);
+                this.$toast.error(errorMessage);
             } finally {
-                this.loading['password'] = false;
+                this.loading = false;
                 this.password.current = '';
                 this.password.new = '';
                 this.password.confirm = '';
@@ -352,7 +320,8 @@ export default {
         
         async deleteAccount() {
             try {
-                this.loading['delete'] = this.$toast.load();
+                if(!this.deletePassword) throw 'Please enter password.'
+                this.loading = true;
                 const response = await deleteUser(this.deletePassword);
                 this.$toast.success(response.data.message);
                 this.$emit('removeSession');
@@ -360,7 +329,7 @@ export default {
                 const errorMessage = error.response ? error.response : error;
                 this.$toast.error(errorMessage);
             } finally {
-                this.loading['delete'] = false;
+                this.loading = false;
             }
         },
 
@@ -368,15 +337,14 @@ export default {
          * User Avatar
          */
         async saveAvatar() {
-            if(this.loading['avatar']) return;
+            if(this.loading) return;
             if(!this.userAvatar.image && !this.userAvatar.deleteAvatar ) return;
             try {
-                console.log('Avarar')
                 // Upload Image
                 const formData = new FormData;
                 formData.append("avatar", this.userAvatar.image);
                 formData.append("delete", this.userAvatar.deleteAvatar ? '1' : '0');
-                this.loading['avatar'] = this.$toast.load();
+                this.loading = true;
                 const response = await changeAvatar(formData);
                 this.$toast.success(response.data.message);
                 this.userAvatar.image = null;
@@ -385,7 +353,7 @@ export default {
                 const errorMessage = error.response ? error.response : error;
                 this.$toast.error(errorMessage);
             } finally {
-                this.loading['avatar'] = false;
+                this.loading = false;
             }
         },
 

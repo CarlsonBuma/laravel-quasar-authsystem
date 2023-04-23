@@ -24,7 +24,7 @@
         <!-- Card Body -->
         <q-card-section>
 
-            <!-- Titile -->
+            <!-- Title -->
             <div
                 v-if="title" 
                 class="flex items-center text-h5 _overflow-hidden"
@@ -57,11 +57,14 @@
             </div>
 
             <!-- Description -->
-            <p v-if="subtitle" class="q-ml-sm q-mr-sm text-caption _text-break">{{ subtitle }}</p>
+            <p v-if="subtitle" class="q-ml-sm q-mr-sm text-caption">{{ subtitle }}</p>
             
             <!-- Header Icon -->
-            <q-separator class="q-mt-md q-mb-lg" />
-            <div class="flex justify-center">
+            <q-separator v-if="iconHeader" class="q-mt-md q-mb-lg" />
+            <div 
+                v-if="iconHeader" 
+                class="flex justify-center"
+            >
                 <q-icon
                     :name="iconHeader"
                     color="primary" 
@@ -80,7 +83,7 @@
             <slot name="bottom_slot" /> 
 
             <q-separator class="q-mt-md q-mb-md"/>
-            <p class="text-caption q-ml-sm q-mr-sm _text-break"><em>{{ note }}</em></p>
+            <p class="text-caption q-ml-sm q-mr-sm"><em>{{ note }}</em></p>
         </q-card-section>
     </q-card>
     

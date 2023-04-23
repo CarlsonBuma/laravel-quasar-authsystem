@@ -81,7 +81,7 @@ Route::middleware(['auth:api', 'email_verified'])->group(function () {
     
     // Transfer Account Request 
     // Email will be updated, after Emailverification, email_verified_at = null
-    Route::post('/user-transfer-account', [TransferAccountController::class, 'accountTokenRequest'])
+    Route::post('/user-transfer-account', [TransferAccountController::class, 'transferAccountRequest'])
         ->name('user.transfer.account');
     
     // Delete User

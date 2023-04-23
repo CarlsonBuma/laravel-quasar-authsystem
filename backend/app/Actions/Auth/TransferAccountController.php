@@ -5,17 +5,59 @@ namespace App\Actions\Auth;
 use Exception;
 use App\Models\User;
 use App\Modules\Modulate;
+use App\Modules\Password;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;
 use App\Mail\SendEmailVerification;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Modules\Password;
 
 class TransferAccountController extends Controller
 {
+    /**
+     ** Transfer Account to new Emailadress
+     **  > Before changing email, user has to verify his new email adress
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function transferAccountRequest(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'email' => ['required', 'string', 'email', 'unique:users', 'max:255'],  // Unique Email
+                'password' => ['required', 'string', 'max:255'],
+            ]);
+            
+            $newEmail = $data['email'];
+            $password = $data['password'];
+            $user = Auth::user();
+            if(!Hash::check($password, $user->password)) throw new Exception('Ups, the given password is incorrect.');
+            
+            // Send Token
+            $this->sendAccountToken($user, $newEmail);
+            $userAccount = User::where('id', Auth::id())->first();
+            $userAccount->email_verified_at = null;
+            $userAccount->save();
+
+            // Logout
+            $userLog = new UserAuthController;
+            $userLog->logoutUser($request);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+
+        return response()->json([
+            'message' => 'Transfering user in progress...',
+        ], 200);
+    }
+
     /**
      * ** Request Transfer Email
      **  > Generate URL, with Token 
@@ -25,7 +67,7 @@ class TransferAccountController extends Controller
      * @param String $newEmail
      * @return void
      */
-    public function accountTokenRequest(User $user, String $newEmail = '')
+    public function sendAccountToken(User $user, String $newEmail = '')
     {
         try {
             // Token for verification
@@ -71,9 +113,11 @@ class TransferAccountController extends Controller
 
             $data = $request->validate([
                 'password' => ['required', 'string', 'max:255', 'confirmed'],
+                'terms' => ['required', 'boolean'],
             ]);
 
-            // Validate Password
+            // Validate
+            if(!$data['terms']) throw new Exception('Please agree with our Terms & Conditions.');
             $password = $data['password'];
             $verifyPassword = new Password;
             if(!$verifyPassword->verifyPassword($password)){

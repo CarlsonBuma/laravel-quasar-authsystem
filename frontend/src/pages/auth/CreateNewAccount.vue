@@ -37,14 +37,41 @@
                     </template>
                 </q-input>
 
-                <!-- Registering vs. Verification -->
-                <SetPassword
-                    :reset="resetPw"
-                    @input="(pw, pw_confirm) => {
-                        this.user.password = pw;
-                        this.user.password_confirm = pw_confirm;
-                    }"
-                />
+                <!-- Set Password -->
+                <div>
+                    <q-input
+                        filled
+                        type="password"
+                        v-model="user.password"
+                        label="Enter password"
+                    >
+                        <!-- Icon -->
+                        <template v-slot:prepend>
+                            <q-icon name="lock" />
+                        </template>
+                        <!-- Validation -->
+                        <template v-slot:append>
+                            <q-icon name="info">
+                                <q-tooltip>
+                                    <PasswordCheck
+                                        :password="user.password"
+                                        :password_confirm="user.password_confirm"
+                                    />
+                                </q-tooltip>
+                            </q-icon>
+                        </template>
+                    </q-input>
+                    <q-input
+                        filled
+                        type="password"
+                        v-model="user.password_confirm"
+                        label="Confirm password"
+                    >
+                        <template v-slot:prepend>
+                            <q-icon name="lock" />
+                        </template>
+                    </q-input>
+                </div>
 
                 <!-- Terms & Conditions -->
                 <div class="flex items-center">
@@ -67,7 +94,7 @@ import { ref } from 'vue';
 import PageWrapper from 'components/PageWrapper.vue';
 import CardWrapper from 'components/CardWrapper.vue';
 import FormWrapper from 'components/FormWrapper.vue';
-import SetPassword from 'src/components/SetPassword.vue';
+import PasswordCheck from 'components/PasswordCheck.vue';
 import TermsConditions from 'src/pages/guest/compliance/TermsConditions.vue';
 import { createAccount } from 'src/apis/auth.js';
 import { passwordRequirements, regRules } from 'src/modules/globals.js';
@@ -76,7 +103,7 @@ export default {
     name: 'CreateNewAccount',
     components: {
         PageWrapper, CardWrapper, FormWrapper, 
-        SetPassword, TermsConditions
+        PasswordCheck, TermsConditions
     },
     setup() {
         return {
@@ -109,7 +136,8 @@ export default {
                 // Validate
                 if(!this.user.name) throw 'Please enter a name.';
                 if (!this.regRulesEmail.test(this.user.email)) throw 'No valid email.';
-                passwordRequirements(this.user.password, this.user.password_confirm);
+                const passwordCheck = passwordRequirements(this.user.password, this.user.password_confirm);
+                if(passwordCheck) throw passwordCheck;
                 if (!this.user.agreed) throw 'Please agree with our Terms & Conditions.';
                 
                 // Create User

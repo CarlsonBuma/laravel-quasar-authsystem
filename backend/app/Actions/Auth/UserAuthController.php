@@ -60,7 +60,7 @@ class UserAuthController extends Controller
             )){
                 // Login if verified
                 if(Auth::user()->email_verified_at) {
-                    $token = Auth::user()->createToken('Baerer_')->accessToken;
+                    $token = Auth::user()->createToken('owner')->accessToken;
                     return response()->json([
                         'token' => $token,
                         'message' => 'Session started.'

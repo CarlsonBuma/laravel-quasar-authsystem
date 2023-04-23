@@ -5,7 +5,7 @@
             :goBack="true"
             title="Reset password"
             iconHeader="lock_clock"
-            note="*After the verification link has been sent to your email, you are able to reset your password."
+            note="*You will receive an email with the provided token. Please click the link, we sent to your email."
         >
             <q-input
                 filled

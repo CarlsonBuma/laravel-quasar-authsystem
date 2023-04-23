@@ -93,7 +93,7 @@ class EmailVerificationController extends Controller
                 $user->save();
 
                 // Reset Password - Reset - Request
-                // As it could be set in other Actions
+                // As it could be set in other Actions - eg. TransferAccount
                 $passwordRequest = PasswordReset::where('email', $user->email)->first();
                 if($passwordRequest) $passwordRequest->delete();
             }

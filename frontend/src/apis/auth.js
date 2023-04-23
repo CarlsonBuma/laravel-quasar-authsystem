@@ -64,16 +64,17 @@ const changePassword = (current, password, confirm) => {
 const transferAccount = (email, password) => {
     return axios.post('user-transfer-account', {
         'email': email,
-        'password': password
+        'password': password,
     });
 }
 
-const updateEmail = (signedRoute, pw, pw_confirm) => {
+const updateEmail = (signedRoute, pw, pw_confirm, terms) => {
     // transferAccount is in progress - Request to origin URL (Client)
     // Redirecting Request from Client-URL to Origin-URL (SERVER)
     return axios.put(signedRoute, {
         'password': pw,
-        'password_confirmation': pw_confirm
+        'password_confirmation': pw_confirm,
+        'terms': terms
     });
 }
 
