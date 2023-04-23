@@ -1,10 +1,12 @@
 # System Requirements
  > Start: 24.12.2023, Carlson
- > Version 1.0.0, 06.01.2023
-    > User Auth System, 06.01.2023
+ > Version 1.2.0, 06.01.2023
+    > User Auth System - Sanctum, 1.0.0, 06.01.2023
+    > User Auth System - OAUTH, 1.2.0, 23.04.2023
 
 ## Testing
  1. User Auth System - 06.01.2023 | safeNsound
+ 1. User Auth System - 24.04.2023 | Testing
 
 ## System Modules
   > User Management
@@ -13,20 +15,20 @@
     > Password Reset
     > User
       > Login + Auth
+        > Logout
       > User Profile
         > Change Avatar
         > Change Name
         > Change Password
         > Transfer Account (Change Email)
-        > Delete Account
-        > Logout
+        > Delete Account    
 
 ## Environment
  * API-Testing: Postman
  * Backend:     Laravel 9
  * FrontEnd:    -
  * Database:    MySQL & PGAdmin
- * Auth:        Sanctum
+ * Auth:        Laravel Passport (Oauth 2.0)
  * Storage:     Public Disk
 
  ### Hosts
