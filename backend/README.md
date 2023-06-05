@@ -1,42 +1,42 @@
 # Initialization
- > php artisan --version
- > composer install
+ - php artisan --version
+ - composer install
 
 ## Migrage Database
- > php artisan migrate
- > php artisan passport:install --force
- > Enter Client Secrets in .env File
+ - php artisan migrate
+ - php artisan passport:install --force
+ - Enter Client Secrets in .env File
 
 ## Seed First User
- > php artisan db:seed --class=UserSeeder
+ - php artisan db:seed --class=UserSeeder
 
 ## Storage
- > php artisan storage:link
+ - php artisan storage:link
 
 ## Setup Mail Driver
- > Choose your Mail Driver
- > Enter Attributes into .env file
+ - Choose your Mail Driver
+ - Enter Attributes into .env file
 
 ## Login
-  > Usercredits: admin@admin.com
-  > Password: admin
+  - Usercredits: admin@admin.com
+  - Password: admin
 
 
 # System Requirements
 ## System Modules
-  > User Management
-    > Registration
-    > Email Verificaton
-    > Password Reset
-    > User
-      > Login + Auth
-        > Logout
-      > User Profile
-        > Change Avatar
-        > Change Name
-        > Change Password
-        > Transfer Account (Change Email)
-        > Delete Account    
+  - User Management
+    - Registration
+    - Email Verificaton
+    - Password Reset
+    - User
+      - Login + Auth
+        - Logout
+      - User Profile
+        - Change Avatar
+        - Change Name
+        - Change Password
+        - Transfer Account (Change Email)
+        - Delete Account    
 
 ## Environment
  * API-Testing: Postman
@@ -53,10 +53,10 @@
 
 
  # Deployment
-  > .env set to production
-  > php artisan vendor:publish --tag=passport-config
-    > Enter Client Secrets in .env File
-  > composer install --optimize-autoloader --no-dev
-  > php artisan config:cache
-  > php artisan event:cache
-  > php artisan route:cache
+  - .env set to production
+  - php artisan vendor:publish --tag=passport-config
+    - Enter Client Secrets in .env File
+  - composer install --optimize-autoloader --no-dev
+  - php artisan config:cache
+  - php artisan event:cache
+  - php artisan route:cache

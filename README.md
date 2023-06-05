@@ -1,5 +1,5 @@
 # System Overview
-Full Auth System - v.1.0
+Full Auth System - v.3.1, 05.06.2023 
 by Carlson, 08.01.2023
 
 ## Current Bugs: 05.06.2023
