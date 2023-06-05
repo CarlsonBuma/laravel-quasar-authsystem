@@ -1,6 +1,6 @@
 <template>
     <q-scroll-area class="fit">
-        <q-list padding >    
+        <q-list padding>  
             
             <!-- User Profile -->
             <q-item 
@@ -31,13 +31,13 @@
 
                 <q-item-section>
                     <p class="m-0"><b>{{ $store.user.name }}</b></p>
-                    <p class="m-0">@owner</p>
+                    <p class="m-0">@admin</p>
                 </q-item-section>
             </q-item>
 
-            <!-- Dashboard -->
+            <!-- Admin - Dashboard -->
             <q-item 
-                @click="$router.push('/dashboard')"
+                @click="$router.push('/backpanel')"
                 clickable 
                 v-ripple
             >
@@ -45,21 +45,7 @@
                     <q-icon name="dashboard" />
                 </q-item-section>
                 <q-item-section>
-                    Dashboard
-                </q-item-section>
-            </q-item>
-
-            <!-- User-Modules -->
-            <q-item 
-                @click="$router.push('/my-gigs')"
-                clickable 
-                v-ripple
-            >
-                <q-item-section avatar>
-                    <q-icon name="construction" />
-                </q-item-section>
-                <q-item-section>
-                    My Gigs
+                    Backpanel
                 </q-item-section>
             </q-item>
 
@@ -78,26 +64,11 @@
                 </q-item-section>
             </q-item>
 
-            <!-- Logout -->
+            <!-- Normal User -->
             <q-item 
-                @click="$emit('logout')"
-                clickable 
-                v-ripple
-            >
-                <q-item-section avatar>
-                    <q-icon name="logout" />
-                </q-item-section>
-                <q-item-section>
-                    Logout
-                </q-item-section>
-            </q-item>
-
-            <!-- Superadmin -->
-            <q-item 
-                v-if="$store.access.admin"
                 @click="() => {
-                    $router.push('/backpanel');
-                    $emit('showAdmin')
+                    $router.push('/dashboard');
+                    $emit('showAdmin');
                 }"
                 clickable
             >
@@ -106,7 +77,7 @@
                 </q-item-section>
 
                 <q-item-section>
-                    Go Backpanel
+                    Go Account
                 </q-item-section>
             </q-item>
         </q-list>
@@ -118,13 +89,13 @@ export default {
     name: 'LeftDrawer',
 
     emits: [
-        'logout',
-        'showAdmin'
+        'showAdmin',
     ],
 
     data() {
         return {
             darkMode: this.$q.dark.isActive,
+            showAdmin: false
         };
     },
 

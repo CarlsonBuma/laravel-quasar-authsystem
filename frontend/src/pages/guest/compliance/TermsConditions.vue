@@ -1,18 +1,14 @@
 <template>
-
     <PageWrapper>
         <CardWrapper
             :goBack="true"
             title="Terms &amp; Conditions"
             iconHeader="description"
         >
-
-            <!-- Content -->
+            <!-- Enter content -->
             Im Terms &amp; Conditions
-            
         </CardWrapper>
     </PageWrapper>
-    
 </template>
 
 <script>

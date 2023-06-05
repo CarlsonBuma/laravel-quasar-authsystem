@@ -1,32 +1,31 @@
+'use strict';
 import 'vue-cookieconsent/vendor/cookieconsent.css';
 
-/*
+/* *************************************************************
  * GDPR: Cookie Consent
  *  > https://github.com/eyecatchup/vue-cookieconsent
  *  > https://github.com/orestbida/cookieconsent
- * 
  *      > Enter Consent-Options
  *          > Enter Analytics Scripts in "onAccept()"
  *      > Init consentOptions in App.js
- * 
  *  CHECK: Console > Anwendung > Cookies
-*/
+************************************************************* */
 
+/** Optionnal cookies will be rendered here! */
 const runCookies = () => {
-    // Google Tag Manager (Google Analytics)
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-NWCBVTH');
+    // (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    // new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    // j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    // 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    // })(window,document,'script','dataLayer','GTM-ID');
 }
 
-// Consent-Options
-const CookieConsentOptions = {
+const consentOptions = {
     autorun: true,
     current_lang: 'en',
     autoclear_cookies: true,                   // default: false
     page_scripts: true,                        // default: false
+
     // mode: 'opt-in'                          // default: 'opt-in'; value: 'opt-in' or 'opt-out'
     // delay: 0,                               // default: 0
     // auto_language: null                     // default: null; could also be 'browser' or 'document'
@@ -35,7 +34,7 @@ const CookieConsentOptions = {
     // hide_from_bots: false,                  // default: false
     // remove_cookie_tables: false             // default: false
     // cookie_name: 'cc_cookie',               // default: 'cc_cookie'
-    // cookie_expiration: 182,                 // default: 182 (days)
+    // cookie_expiration: 182,                    // default: 182 (days)
     // cookie_necessary_only_expiration: 182   // default: disabled
     // cookie_domain: location.hostname,       // default: current domain
     // cookie_path: '/',                       // default: root
@@ -43,29 +42,7 @@ const CookieConsentOptions = {
     // use_rfc_cookie: false,                  // default: false
     // revision: 0,                            // default: 0
 
-    /*
-     * Consent Actions
-     *  > Manage Consent here!
-    */
-    onAccept: function (cookie) {
-        
-        // Check if Analytics is allowed
-        let allowAnalytics = false;
-        cookie.level.forEach((level) => {
-            if(level === 'analytics') allowAnalytics = true; 
-        });
-
-        /*
-         * Analytics Scripts
-         *  > Run Cookies
-        */
-        if(!allowAnalytics) return;
-        console.log("Consent to analyze has been given!");
-        runCookies();
-    },
-
     // onFirstAction: function(user_preferences, cookie){
-    //     // callback triggered only once
     //     console.log('CookieConsens_FirstAction', user_preferences, cookie)
     // },
 
@@ -73,10 +50,19 @@ const CookieConsentOptions = {
     //     console.log(cookie, changed_preferences)
     // },
 
-    /*
-     * Cookie Consent Legal
-     *  > Enter Details of each Cookie!
-    */
+    /** Process consent on accept */
+    onAccept: function (cookie) {
+        let allowAnalytics = false;
+        cookie.level.forEach((level) => {
+            if(level === 'analytics') allowAnalytics = true;
+        });
+
+        if(!allowAnalytics) return;
+        console.log("Consent to analyze has been given!");
+        runCookies();
+    },
+
+    /** Edit Content here */
     languages: {
         'en': {
             consent_modal: {
@@ -84,11 +70,11 @@ const CookieConsentOptions = {
                 description: 'Hi there, this website uses essential cookies to ensure its proper operation and tracking cookies to understand how you interact with it. The latter will be set only after consent. <button type="button" data-cc="c-settings" class="cc-link">Let me choose</button>',
                 primary_btn: {
                     text: 'Accept all',
-                    role: 'accept_all'              // 'accept_selected' or 'accept_all'
+                    role: 'accept_all'
                 },
                 secondary_btn: {
                     text: 'Reject all',
-                    role: 'accept_necessary'        // 'settings' or 'accept_necessary'
+                    role: 'accept_necessary'
                 }
             },
             settings_modal: {
@@ -101,13 +87,13 @@ const CookieConsentOptions = {
                     {col1: 'Name'},
                     {col2: 'Domain'},
                     {col3: 'Expiration'},
-                    {col4: 'Description'}
+                    {col4: 'Description'},
                 ],
                 blocks: [
                     {
                         title: 'Cookie usage',
                         description: 'We use cookies to ensure the basic functionalities of the website and to enhance your online experience. You can choose for each category to opt-in/out whenever you want. For more details relative to cookies and other sensitive data, please read the full <a href="#terms-and-conditions" class="cc-link">privacy policy</a>.'
-                    }, 
+                    },
                     {
                         title: 'Strictly necessary cookies',
                         description: 'These cookies are essential for the proper functioning of my website. Without these cookies, the website would not work properly',
@@ -118,19 +104,18 @@ const CookieConsentOptions = {
                         },
                         cookie_table: [             // list of all expected cookies
                             {
-                                col1: process.env.SESSION_NAME,
-                                col2: process.env.APP_API_URL,
-                                col3: '90 days',
-                                col4: 'Authentication',
+                                col1: 'cc_cookie',
+                                col2: process.env.VUE_APP_URL,
+                                col3: '160 days',
+                                col4: 'Cookie Consent - Defines, if consent to analyze data has been given.',
                             }, {
-                                col1: 'CSRF-Token',
-                                col2: process.env.APP_API_URL,
-                                col3: '90 days',
-                                col4: 'Authentication',
+                                col1: 'Usersession',
+                                col2: process.env.SESSION_NAME,
+                                col3: '365 days',
+                                col4: 'Local JWT Session, to verify your client and allow you to interact with your account.',
                             },
-
                         ]
-                    }, 
+                    },
                     {
                         title: 'Performance and Analytics cookies',
                         description: 'These cookies collect information about how you use the website, which pages you visited and which links you clicked on. All of the data is anonymized and cannot be used to identify you.',
@@ -141,29 +126,14 @@ const CookieConsentOptions = {
                         },
                         cookie_table: [             // list of all expected cookies
                             {
-                                col1: '^_ga',       // match all cookies starting with "_ga"
+                                col1: '^_ga',
                                 col2: 'google.com',
-                                col3: '2 years',
-                                col4: 'Google Analytics',
+                                col3: '1 years',
+                                col4: 'Google Analytics (GA-4) - session statistics, approx. geolocation, device infos, default events, user properties, client ID, etc. See https://support.google.com/analytics/answer/11593727?hl=en',
                                 is_regex: true
                             },
-                            {
-                                col1: '_gid',
-                                col2: 'google.com',
-                                col3: '1 day',
-                                col4: 'Google Analytics',
-                            }
                         ]
-                    }, 
-                    // {
-                    //     title: 'Advertisement and Targeting cookies',
-                    //     description: 'These cookies collect information about how you use the website, which pages you visited and which links you clicked on. All of the data is anonymized and cannot be used to identify you',
-                    //     toggle: {
-                    //         value: 'targeting',
-                    //         enabled: false,
-                    //         readonly: false
-                    //     }
-                    // }, 
+                    },
                     {
                         title: 'More information',
                         description: 'For any queries in relation to our policy on cookies and your choices, please <a class="cc-link" href="#contact">contact us</a>.',
@@ -174,4 +144,4 @@ const CookieConsentOptions = {
     }
 }
 
-export default CookieConsentOptions;
+export default consentOptions;

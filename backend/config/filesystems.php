@@ -44,7 +44,7 @@ return [
             'throw' => false,
         ],
 
-        'avatars' => [
+        'avatar' => [
             'driver' => 'local',
             'root' => storage_path('app/avatars'),
             'url' => env('APP_URL').'/avatar',
@@ -76,10 +76,9 @@ return [
     | the locations of the links and the values should be their targets.
     |
     */
-
+    
     'links' => [
         public_path('storage') => storage_path('app/public'),
         public_path('avatar') => storage_path('app/avatars'),
     ],
-
 ];

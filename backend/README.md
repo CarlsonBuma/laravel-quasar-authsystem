@@ -1,13 +1,28 @@
+# Initialization
+ > php artisan --version
+ > composer install
+
+## Migrage Database
+ > php artisan migrate
+ > php artisan passport:install --force
+ > Enter Client Secrets in .env File
+
+## Seed First User
+ > php artisan db:seed --class=UserSeeder
+
+## Storage
+ > php artisan storage:link
+
+## Setup Mail Driver
+ > Choose your Mail Driver
+ > Enter Attributes into .env file
+
+## Login
+  > Usercredits: admin@admin.com
+  > Password: admin
+
+
 # System Requirements
- > Start: 24.12.2023, Carlson
- > Version 1.2.0, 06.01.2023
-    > User Auth System - Sanctum, 1.0.0, 06.01.2023
-    > User Auth System - OAUTH, 1.2.0, 23.04.2023
-
-## Testing
- 1. User Auth System - 06.01.2023 | safeNsound
- 1. User Auth System - 24.04.2023 | Testing
-
 ## System Modules
   > User Management
     > Registration
@@ -25,9 +40,9 @@
 
 ## Environment
  * API-Testing: Postman
- * Backend:     Laravel 9
+ * Backend:     Laravel 10
  * FrontEnd:    -
- * Database:    MySQL & PGAdmin
+ * Database:    PSQL & PGADMIN4
  * Auth:        Laravel Passport (Oauth 2.0)
  * Storage:     Public Disk
 
@@ -36,15 +51,12 @@
  * Github:      Code Management
  * Localhost:   Server & Domain
 
- # Systemsetup 
- ## Login
-  Usercredits: admin@admin.com
-  Password: admin
 
- ## Database
- ### Migarte
-  > php artisan migrate
-
- ### Seeding
-  > php artisan db:seed --class=UserSeeder
-  > php artisan db:seed --class=AdminSeeder
+ # Deployment
+  > .env set to production
+  > php artisan vendor:publish --tag=passport-config
+    > Enter Client Secrets in .env File
+  > composer install --optimize-autoloader --no-dev
+  > php artisan config:cache
+  > php artisan event:cache
+  > php artisan route:cache

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Actions\Admin\BackpanelController;
+use App\Http\Controllers\Admin\BackpanelController;
 
 // AUTHENTICATED
 Route::middleware(['auth:api', 'email_verified', 'is_admin'])->group(function () {

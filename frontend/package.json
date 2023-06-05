@@ -1,8 +1,8 @@
 {
-    "name": "bumatools",
+    "name": "authsystem",
     "version": "1.0.0",
-    "description": "Tool up your organization",
-    "productName": "bumaTools",
+    "description": "Create an amazing app",
+    "productName": "Landingpage",
     "author": "CarlsonBuma <75643791+CarlsonBuma@users.noreply.github.com>",
     "private": true,
     "scripts": {
@@ -23,8 +23,7 @@
         "vue": "^3.0.0",
         "vue-cookieconsent": "^0.0.11",
         "vue-i18n": "^9.0.0",
-        "vue-router": "^4.0.0",
-        "vue3-draggable": "^2.0.9"
+        "vue-router": "^4.0.0"
     },
     "devDependencies": {
         "@intlify/vite-plugin-vue-i18n": "^3.3.1",

@@ -1,14 +1,11 @@
 <template>
-
     <PageWrapper :rendering="this.loading">
-
-        <!-- http://localhost:9000/#/email-verification-request/patrick.carl.ammann@gmail.com -->
         <CardWrapper
             :goBack="true"
             :allowHeader="true"
             title="Email verification"
             iconHeader="verified"
-            note="*The verification link will be sent to the provided email."
+            note="*We send the verification token to the provided email. After successful verification you are able to login."
             class="q-mb-md"
         >
             <q-input
@@ -27,14 +24,13 @@
             <div class="flex items-center justify-end">
                 <ButtonSubmit
                     :loading="loading"
-                    buttonText="Send Token"
+                    buttonText="Send Me Token"
                     @submit="sendEmailVerification()"
                     class="q-mt-md"
                 />
             </div>
         </CardWrapper>
     </PageWrapper>
-
 </template>
 
 <script>

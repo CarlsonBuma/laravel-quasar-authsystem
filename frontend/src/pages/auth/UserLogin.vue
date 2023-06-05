@@ -11,7 +11,7 @@
                 buttonText="Login"
                 buttonIcon="verified_user"
                 :loading="loading"
-                @submit="loginUser()"
+                @submit="loginUser(login.email, login.password)"
             >
                 <q-input
                     filled
@@ -71,14 +71,17 @@ export default {
     components: {
         PageWrapper, CardWrapper, FormWrapper
     },
+
     emits: [
         'authorize'
     ],
+
     setup() {
         return {
             loading: ref(false),
         };
     },
+    
     data() {
         return {
             login: {
@@ -87,16 +90,14 @@ export default {
             }
         };
     },
+    
     methods: {
-
-        // Login User here
-        // Auth User in App.vue
-        async loginUser() {
+        async loginUser(email, password) {
             try {
-                if(!this.login.password || !this.login.email) throw "Please enter credentials."
+                if(!password || !email) throw "Please enter credentials."
                 this.loading = true;
                 const response = await userLogin(this.login);
-                this.$store.createSession(response.data.token);
+                this.$store.setToken(response.data.token);
                 this.$emit('authorize');
             } catch (error) {
                 const errorMessage = error.response ? error.response : error;

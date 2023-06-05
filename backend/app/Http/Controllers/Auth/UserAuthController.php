@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Actions\Auth;
+namespace App\Http\Controllers\Auth;
 
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,16 +14,14 @@ class UserAuthController extends Controller
      ** Get User Data
      **     > User Credentials
      **     > ...
-     *
      * @return void
      */
     public function authUser()
     {
         $user = Auth::user();
         $isAdmin = Auth::user()->is_admin;
-
         $avatarPath = $user->avatar
-            ? asset(public_path('avatar') . '/' . $user->avatar)
+            ? URL::to('/avatar') . '/' . $user->avatar
             : '';
         
         return response()->json([
@@ -30,7 +29,6 @@ class UserAuthController extends Controller
             'name' => $user->name,
             'avatar' => $avatarPath,
             'email' => $user->email,
-            'role' => 'owner',
             'is_admin' => $isAdmin ? true : false
         ], 200);
     }
@@ -40,7 +38,6 @@ class UserAuthController extends Controller
      **  > Attemps-Middleware: throttle:6,1
      **  > Handle Verified Email
      **  > Start Session
-     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -56,11 +53,9 @@ class UserAuthController extends Controller
             if (Auth::attempt([
                     'email' => $credentials['email'],
                     'password' => $credentials['password']
-                ]
-            )){
-                // Login if verified
+            ])){
                 if(Auth::user()->email_verified_at) {
-                    $token = Auth::user()->createToken('owner')->accessToken;
+                    $token = Auth::user()->createToken('user')->accessToken;
                     return response()->json([
                         'token' => $token,
                         'message' => 'Session started.'
@@ -85,16 +80,12 @@ class UserAuthController extends Controller
     }
 
     /**
-     ** Handle Logout.
-     **  > Remove Session
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     ** Remove Session
+     * @return void
      */
-    public function logoutUser(Request $request)
+    public function logoutUser()
     {
         try {
-            // We want to delete Token instead of revoke
             Auth::user()->token()->delete();
         } catch (Exception $e) {
             return response()->json([

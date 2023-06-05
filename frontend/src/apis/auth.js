@@ -2,16 +2,12 @@
 
 import axios from 'axios';
 
-/*
- * AUTH System
- *  > CSRF
- *  > Login
- *      > AUTH
- *      > Logout
- */
-const setCSRFToken = () => {
-    return axios.get("/sanctum/csrf-cookie");
-}
+/** *******************************
+ ** AUTH System
+ **  > Login
+ **      > AUTH
+ **      > Logout
+ ********************************* */
 
 const userLogin = (credentials) => {
     return axios.post("/login", {
@@ -28,16 +24,65 @@ const userLogout = () => {
     return axios.post('/logout');
 }
 
-/*
- * User Account Management
- *  > change Avatar
- *  > change Name
- *  > change Password
- *  > > Change Email
- *      > Request changing email
- *      > Verify transfer
- *  > delete Account
- */
+/** *********************************
+ ** Account Managemenr
+ **  > create Account
+ **  > verify Account
+ **      > Request verify email 
+ **      > Verify email
+ **  > reset Password
+ **      > Request reseting password
+ **      > Reset Password
+ ************************************ */
+
+const createAccount = (user) => {
+    return axios.post("/create-account", {
+        'name': user.name,
+        'email': user.email,
+        'terms': user.agreed,
+    });
+}
+
+const emailVerificationRequest = (email) => {
+    return axios.post("/email-verification-request", {
+        'email': email,
+    });
+}
+
+const emailVerification = (signedRoute, password, passwordConfirm) => {
+    // Redirecting Request from Client-URL to Origin-URL (SERVER)
+    // Server Request to signedRoute
+    return axios.put(signedRoute, {
+        'password': password,
+        'password_confirmation': passwordConfirm,
+    });
+}
+
+const passwordResetRequest = (email) => {
+    return axios.post("/password-reset-request", {
+        'email': email
+    });
+}
+
+const passwordReset = (signedRoute, password, password_confirm) => {
+    // Redirecting Request from Client-URL to Origin-URL (SERVER)
+    // Server Request to signedRoute
+    return axios.put(signedRoute, {
+        'password': password,
+        'password_confirmation': password_confirm
+    });
+}
+
+/** *********************************
+ ** User Account Management
+ **  > change Avatar
+ **  > change Name
+ **  > change Password
+ **  > Change Email
+ **     > Request changing email
+ **     > Verify transfer
+ **  > delete Account
+ ********************************* */
 
 // User - Update Avatar
 const changeAvatar = (formData) => {
@@ -85,59 +130,7 @@ const deleteUser = (password) => {
     });
 }
 
-/*
- * Account Managemenr
- *  > create Account
- *  > verify Account
- *      > Request verify email 
- *      > Verify email
- *  > reset Password
- *      > Request reseting password
- *      > Reset Password
- */
-
-// Register
-const createAccount = (user) => {
-    return axios.post("/create-account", {
-        'name': user.name,
-        'email': user.email,
-        'password': user.password,
-        'password_confirmation': user.password_confirm,
-        'terms': user.agreed,
-    });
-}
-
-// Email Verification
-const emailVerificationRequest = (email) => {
-    return axios.post("/email-verification-request", {
-        'email': email,
-    });
-}
-
-const emailVerification = (signedRoute) => {
-    // Redirecting Request from Client-URL to Origin-URL (SERVER)
-    // Server Request to signedRoute
-    return axios.get(signedRoute);
-}
-
-// Password Reset
-const passwordResetRequest = (email) => {
-    return axios.post("/password-reset-request", {
-        'email': email
-    });
-}
-
-const passwordReset = (signedRoute, password, password_confirm) => {
-    // Redirecting Request from Client-URL to Origin-URL (SERVER)
-    // Server Request to signedRoute
-    return axios.put(signedRoute, {
-        'password': password,
-        'password_confirmation': password_confirm
-    });
-}
-
 export { 
-    setCSRFToken,
     userLogin,
     userAuth,
     userLogout,

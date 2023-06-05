@@ -119,7 +119,9 @@ export default {
     components: {
         PageWrapper, CardWrapper, PasswordCheck, ButtonSubmit, TermsConditions
     },
-
+    emits: [
+        'authorize'
+    ],
     setup() {
         return {
             loading: ref(false),
@@ -143,13 +145,15 @@ export default {
             try {
                 const passwordCheck = passwordRequirements(pw, pw_confirm);
                 if(passwordCheck) throw passwordCheck;
-                // if(!this.agreed) throw 'Please agree with our Terms & conditions'
+                if(!this.agreed) throw 'Please agree to our terms & conditions.'
                 // Transfer
                 // Fullpath includes Token to verify its user
                 this.loading = true;
                 const response = await updateEmail(this.$route.fullPath, pw, pw_confirm, this.agreed);
                 this.$toast.success(response.data.message)
-                this.$router.push('/login')
+                // Authorize
+                this.$store.setToken(response.data.token);
+                this.$emit('authorize');
             } catch (error) {
                 this.$toast.error(error.response ? error.response : error);
             } finally {

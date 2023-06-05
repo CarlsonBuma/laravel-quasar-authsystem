@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Actions\Auth;
+namespace App\Http\Controllers\Auth;
 
 use Exception;
 use App\Models\User;
 use App\Modules\Password;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use App\Actions\Auth\UserAuthController;
+use App\Http\Controllers\Auth\UserAuthController;
+use App\Http\Controllers\Controller;
 
 class UserProfileController extends Controller
 {
@@ -23,7 +23,6 @@ class UserProfileController extends Controller
      **      > Link new Avatar with DB
      **  > Delete Avatar
      **      > Delete Old Avatar 
-     *
      * @param Request $request
      * @return void
      */
@@ -35,6 +34,7 @@ class UserProfileController extends Controller
                 'delete' => ['required', 'boolean'],
             ]);
 
+            // User's Avatar
             $userID = Auth::id();
             $currentUser = User::find($userID);
             $userAvatar = $currentUser->avatar;
@@ -42,7 +42,7 @@ class UserProfileController extends Controller
             // Delete Avatar
             if($data['delete']) {
                 if($userAvatar) {
-                    Storage::disk('avatars')->delete($userAvatar);
+                    Storage::disk('avatar')->delete($userAvatar);
                     $currentUser->avatar = null;
                     $currentUser->save();
                 }
@@ -56,8 +56,8 @@ class UserProfileController extends Controller
                     $fileExtension = $request->file('avatar')->extension();
                     $imageName = $userID . '-' . Str::random(32) . '.' . $fileExtension;
                 
-                    // Change Image
-                    if($userAvatar) Storage::disk('avatars')->delete($userAvatar);       
+                    // Change Image: Existing vs. non existing
+                    if($userAvatar) Storage::disk('avatar')->delete($userAvatar);       
                     Storage::putFileAs('avatars', $request->file('avatar'), $imageName);
                     
                     // Save in DB
@@ -130,9 +130,7 @@ class UserProfileController extends Controller
 
             // Validate Password
             $verifyPassword = new Password;
-            if(!$verifyPassword->verifyPassword($passwordNew)){
-                throw new Exception($verifyPassword->error);
-            }
+            if(!$verifyPassword->verifyPassword($passwordNew)) throw new Exception($verifyPassword->error);
             
             // Check Current Password
             $user = User::find($userID);
@@ -180,7 +178,7 @@ class UserProfileController extends Controller
             // Remove Avatar
             $userAvatar = $user->avatar;
             if($userAvatar) {
-                Storage::disk('avatars')->delete($userAvatar);
+                Storage::disk('avatar')->delete($userAvatar);
             }
 
             // Delete Userdata

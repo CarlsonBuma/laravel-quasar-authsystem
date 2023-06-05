@@ -1,14 +1,13 @@
-<!-- Gigup Design - 06.01.2023, v.0.0.1 -->
 <template>    
-
     <div id="app-wrapper">
+        
         <!-- Design -->
         <div id="app-design"></div>
-
+        
         <!-- Layout: hHh lpr fff, lHh lpr fff -->
         <q-layout view="lHh Lpr lff">
             
-            <!-- Top -->
+            <!-- Header Top -->
             <q-header 
                 id="app-header"
                 elevated
@@ -33,7 +32,7 @@
                 />
             </q-header>
 
-            <!-- Drawers -->
+            <!-- Left - Drawers -->
             <q-drawer
                 v-if="$store.access.user"
                 v-model="showDrawerLeft"
@@ -41,8 +40,14 @@
                 show-if-above
                 bordered
             >
+                <LeftDrawerAdmin 
+                    v-if="showAdmin && $store.access.admin" 
+                    @showAdmin="showAdmin = false"
+                />
                 <LeftDrawer 
-                    @logout="logoutUser()" 
+                    v-else
+                    @logout="logoutUser()"
+                    @showAdmin="showAdmin = true" 
                 />
             </q-drawer>
 
@@ -73,7 +78,6 @@
             </q-footer>
         </q-layout>
     </div>
-    
 </template>
 
 <script>
@@ -82,53 +86,53 @@ import NavTopGuest from 'src/layouts/NavTop_Guest.vue';
 import NavTopUser from 'src/layouts/NavTop_User.vue';
 import NavFoot from 'src/layouts/NavFoot.vue';
 import LeftDrawer from 'src/layouts/LeftDrawer.vue';
-import { userAuth, userLogout, setCSRFToken } from 'src/apis/auth.js';
+import LeftDrawerAdmin from 'src/layouts/LeftDrawerAdmin.vue';
+import CookieConsentOptions from 'src/modules/cookieConsent';
+import { userAuth, userLogout } from 'src/apis/auth.js';
 
 export default {
     name: 'App',
     components: {
-        NavTopGuest, NavTopUser, NavFoot, LeftDrawer
+        NavTopGuest, NavTopUser, NavFoot, LeftDrawer, LeftDrawerAdmin
     },
+
     setup() {
         return {
             showDrawerLeft: ref(false),
             expandDrawerLeft: ref(false),
+            showAdmin: ref(false)
         };
     },
-    mounted() {
-        // CSRF - Token - needed JWT?
-        // this.getCSRFToken();
 
-        // Darkmode
+    /* Setup App */
+    mounted() {
+        /* Darkmode */
         const darkMode = this.$q.dark.isActive;
         this.$q.dark.set(darkMode);
 
-        // Init CookieConsent
-        this.$cc.run(this.$cookieConsentOptions);
+        /* Init CookieConsent */
+        this.$cc.run(CookieConsentOptions);
 
-        // ConsoleLogs
+        /* ConsoleLogs */
         // this.showLogs();
     },
+
     methods: { 
-
-        async getCSRFToken() {
-            console.log(this.$axios.defaults.headers.common)
-            console.log(localStorage)
-            await setCSRFToken();
-        },
-
         async authUser() {
             try {
                 // Session Storage
                 // Bearer Token - OAuth2
-                if(!this.$store.setSession()) throw 'No token set.';
+                this.$store.setSession();
                 this.$toast.load();
                 const response = await userAuth();
                 this.$store.setUser(response.data);
                 this.$router.push('/dashboard');
                 this.$toast.success('Session started');
             } catch (error) {
-                if(error.response) this.$toast.error(error.response)
+                if(error.response) {
+                    this.removeSession();
+                    this.$toast.error(error.response)
+                }
                 this.$router.push('/login');
             } finally {
                 this.$toast.loaded();
@@ -149,6 +153,7 @@ export default {
         },
 
         removeSession() {
+            this.$store.removeToken();
             this.$store.removeSession(this.$env.SESSION_NAME);
             this.$router.push('/');
         },

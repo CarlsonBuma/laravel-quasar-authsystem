@@ -63,7 +63,6 @@
             <p><b>ID:</b>&nbsp;{{ $store.user.id }}</p>
             <p><b>Username:</b>&nbsp;{{ $store.user.name }}</p>
             <p><b>Email:</b>&nbsp;{{ $store.user.email }}</p>
-            <p><b>Role:</b>&nbsp;{{ $store.access.role }}</p>
         </CardWrapper>
 
         <!-- UserName -->
@@ -266,9 +265,7 @@ export default {
         };
     },
     methods: {
-        /*
-         * Credentials
-         */
+        /** Credentials */
         async submitUsername() {
             try {
                 if(this.$store.user.name.length === 0) throw ('Please enter name.');
@@ -333,14 +330,11 @@ export default {
             }
         },
 
-        /*
-         * User Avatar
-         */
+        /** User Avatar */
         async saveAvatar() {
             if(this.loading) return;
             if(!this.userAvatar.image && !this.userAvatar.deleteAvatar ) return;
             try {
-                // Upload Image
                 const formData = new FormData;
                 formData.append("avatar", this.userAvatar.image);
                 formData.append("delete", this.userAvatar.deleteAvatar ? '1' : '0');

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Auth;
+namespace App\Http\Controllers\Auth;
 
 use Exception;
 use App\Models\User;
@@ -8,7 +8,6 @@ use App\Modules\Modulate;
 use App\Modules\Password;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\PasswordReset;
 use App\Mail\SendPasswordReset;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -20,14 +19,12 @@ class PasswordResetController extends Controller
      ** Send Reset Email
      **  > Generate URL, with Token 
      **  > Send verification link to new email
-     *
      * @param Request $request
      * @return void
      */
     public function passwordResetRequest(Request $request)
     {
         try {
-
             $data = $request->validate([
                 'email' => ['required', 'email'],
             ]);
@@ -35,19 +32,17 @@ class PasswordResetController extends Controller
             // Create Reset Token
             $user = User::where('email', $data['email'])->first();
             if ($user) {
-                $token = Str::random(125);
-                PasswordReset::updateOrCreate([
-                    'email' => $user->email
-                ], [
-                    'token' => Hash::make($token),
-                    'created_at' => now()
-                ]);
+                $token = Str::random(255);
+                $user->token = $token;
+                $user->save();
                 
-                // Send verification Link
+                // Create Token
                 $verificationLink = Modulate::signedLink('password.reset', [
                     'email' => $user->email,
                     'token' => $token
                 ]);
+
+                // Send Token
                 Mail::to($user)->send(new SendPasswordReset($verificationLink, $user));
             }
         } catch (Exception $e) {
@@ -57,7 +52,7 @@ class PasswordResetController extends Controller
         }
 
         return response()->json([
-            'message' => 'The link to reset your password has been sent.',
+            'message' => 'The token to reset your password, has been sent to your email.',
         ], 200); 
     }
 
@@ -66,11 +61,10 @@ class PasswordResetController extends Controller
      **  > Check Password Requirements
      **  > Validate URL & Token
      **  > Update current Password (hashed)
-     
      * @param Request $request
      * @return void
      */
-    public function passwordReset(String $email, String $hash, Request $request) 
+    public function passwordReset(String $email, String $token, Request $request) 
     {
         try {
             
@@ -86,28 +80,24 @@ class PasswordResetController extends Controller
             }
 
             // Validate Signature
-            if (!$request->hasValidSignatureWhileIgnoring(['password', 'password_confirmation'])) throw new Exception('Link has been expired.');
-            
-            // Verify Credentials
-            $passwordResetQuery = PasswordReset::where('email', $email);
-            $passwordResetEntry = $passwordResetQuery->first();
-            if(!$passwordResetEntry) throw new Exception('No valid verification key.');
-            if (!Hash::check($hash, $passwordResetEntry->token)) throw new Exception('No valid verification key.');
-            
-            // Verify User
+            if (!$request->hasValidSignature()) throw new Exception('Link has been expired.');
             $user = User::where([
-                'email' => $passwordResetEntry->email
+                'email' => $email,
+                'token' => $token
             ])->first();
-            if(!$user) throw new Exception('This user does not exist anymore.');
-                
-            // Create new Password & Verify Email as well
-            $user->password = Hash::make($password);
-            if(!$user->email_verified_at) $user->email_verified_at = now();
-            $user->save();
-                
-            // Remove PasswordReset Entry
-            $passwordResetQuery->delete();
 
+            // Set User
+            if(!$user) throw new Exception('Invalid verification key.');
+            $user->password = Hash::make($password);
+            $user->token = null;
+            $user->save();
+
+            // Login
+            $token = $user->createToken('user')->accessToken;
+            return response()->json([
+                'token' => $token,
+                'message' => 'Your password has been updated.'
+            ], 200);
         } catch(Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
@@ -115,7 +105,7 @@ class PasswordResetController extends Controller
         }
 
         return response()->json([
-            'message' => 'New password has been created!'
+            'message' => 'Your password has been updated.'
         ], 200);
     }
 }

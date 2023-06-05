@@ -1,9 +1,9 @@
 import { route } from 'quasar/wrappers';
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router';
-import routesAuth from './routes/auth';
-import routesGuest from './routes/guest';
-import routesUser from './routes/user';
-import routesBackpanel from './routes/backpanel';
+import routesAuth from './auth';
+import routesGuest from './visitor';
+import routesUser from './user';
+import routesBackpanel from './admin';
 
 export default route(function (/* { store, ssrContext } */) {
     const createHistory = process.env.SERVER

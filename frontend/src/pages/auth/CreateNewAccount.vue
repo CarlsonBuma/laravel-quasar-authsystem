@@ -5,7 +5,7 @@
             :goBack="true"
             title="Create account"
             iconHeader="admin_panel_settings"
-            note="*After registration, plese verify your account by to provided link we send you by email."
+            note="*After registration, plese verify your account by the provided link we send you by email. You are able to set your password, after successful verification."
         >
             <!-- Registration -->
             <FormWrapper
@@ -37,42 +37,6 @@
                     </template>
                 </q-input>
 
-                <!-- Set Password -->
-                <div>
-                    <q-input
-                        filled
-                        type="password"
-                        v-model="user.password"
-                        label="Enter password"
-                    >
-                        <!-- Icon -->
-                        <template v-slot:prepend>
-                            <q-icon name="lock" />
-                        </template>
-                        <!-- Validation -->
-                        <template v-slot:append>
-                            <q-icon name="info">
-                                <q-tooltip>
-                                    <PasswordCheck
-                                        :password="user.password"
-                                        :password_confirm="user.password_confirm"
-                                    />
-                                </q-tooltip>
-                            </q-icon>
-                        </template>
-                    </q-input>
-                    <q-input
-                        filled
-                        type="password"
-                        v-model="user.password_confirm"
-                        label="Confirm password"
-                    >
-                        <template v-slot:prepend>
-                            <q-icon name="lock" />
-                        </template>
-                    </q-input>
-                </div>
-
                 <!-- Terms & Conditions -->
                 <div class="flex items-center">
                     <q-checkbox v-model="user.agreed" label="I agree with" />&nbsp;
@@ -94,23 +58,21 @@ import { ref } from 'vue';
 import PageWrapper from 'components/PageWrapper.vue';
 import CardWrapper from 'components/CardWrapper.vue';
 import FormWrapper from 'components/FormWrapper.vue';
-import PasswordCheck from 'components/PasswordCheck.vue';
 import TermsConditions from 'src/pages/guest/compliance/TermsConditions.vue';
 import { createAccount } from 'src/apis/auth.js';
-import { passwordRequirements, regRules } from 'src/modules/globals.js';
+import { regRules } from 'src/modules/globals.js';
 
 export default {
     name: 'CreateNewAccount',
     components: {
         PageWrapper, CardWrapper, FormWrapper, 
-        PasswordCheck, TermsConditions
+        TermsConditions
     },
     setup() {
         return {
+            regRulesEmail: regRules.email,
             loading: ref(false),
-            showTerms: ref(false),
-            resetPw: ref(false),
-            regRulesEmail: regRules.email
+            showTerms: ref(false)
         };
     },
     data() {
@@ -118,40 +80,29 @@ export default {
             user: {
                 name: '',
                 email: '',
-                password: '',
-                password_confirm: '',
                 agreed: false,
             },
         };
     },
     methods: {
-
-        /**
-         * User Registration
-         *  > Create Account
-         *      > Show Verify Email
-         */
         async registerUser() {
             try {
                 // Validate
                 if(!this.user.name) throw 'Please enter a name.';
                 if (!this.regRulesEmail.test(this.user.email)) throw 'No valid email.';
-                const passwordCheck = passwordRequirements(this.user.password, this.user.password_confirm);
-                if(passwordCheck) throw passwordCheck;
                 if (!this.user.agreed) throw 'Please agree with our Terms & Conditions.';
-                
+
                 // Create User
                 this.loading = true;
                 const response = await createAccount(this.user);
                 this.$toast.success(response.data.message);
                 this.user.agreed = false;
-                this.resetPw = true;
 
                 // Redirect User to Verify Email
                 this.$router.push({
                     name: 'EmailVerificationRequest', 
                     params: { 
-                        email: response.data.email,
+                        email: this.user.email,
                     }
                 });
             } catch (error) {

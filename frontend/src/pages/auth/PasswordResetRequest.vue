@@ -1,5 +1,4 @@
 <template>
-
     <PageWrapper :rendering="loading">
         <CardWrapper
             :goBack="true"
@@ -29,7 +28,6 @@
             </div>
         </CardWrapper>
     </PageWrapper>
-
 </template>
 
 <script>

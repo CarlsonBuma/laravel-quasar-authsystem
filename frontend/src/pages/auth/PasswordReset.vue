@@ -110,17 +110,19 @@ export default {
         };
     },
     methods: {
-
         async setUserPassword(password, password_confirm) {
             try {
+                // Request
                 const passwordCheck = passwordRequirements(password, password_confirm);
                 if(passwordCheck) throw passwordCheck;
                 this.loading = true;
                 const response = await passwordReset(this.$route.fullPath, password, password_confirm);
                 this.$toast.success(response.data.message);
-                this.$router.push('/login');
+                // Authorize
+                this.$store.setToken(response.data.token);
+                this.$emit('authorize');
             } catch (error) {
-                if(error.response) this.$router.push('/')
+                // if(error.response) this.$router.push('/')
                 this.$toast.error(error.response ? error.response : error);
             } finally {
                 this.loading = false;

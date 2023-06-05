@@ -6,9 +6,8 @@ const userStore = defineStore({
     id: "user",
     state: () => ({
         access: {
-            user: false,
-            admin: false,
-            role: 'guest',          // Default roles as 'user', 'admin'
+            user: false,        // Access to memberarea
+            admin: false,       // Access to adminarea
         },
         user: {
             id: 0,
@@ -18,11 +17,6 @@ const userStore = defineStore({
         },
     }),
     actions: {
-
-        removeAdmin() {
-            this.access.admin = false;
-        },
-        
         setUser(user) {
             // Credits
             this.user.id = user.id
@@ -33,50 +27,37 @@ const userStore = defineStore({
             // User Auth
             this.access.user = true;
             this.access.admin = user.is_admin
-            this.access.role = user.role
         },
 
-        createSession(sessionToken) {
+        setToken(sessionToken) {
             localStorage.setItem(process.env.SESSION_NAME, sessionToken);
-            axios.interceptors.request.use((config) => {
-                config.headers["Authorization"] = `Bearer ${sessionToken}`
-                return config;
-            });
         },
 
         setSession() {
             // Check Header Set
             const token = localStorage.getItem(process.env.SESSION_NAME);
-            if(!token) return false;
-            if(axios.defaults.headers.common['Authorization']) return true;
+            if(!token) throw 'No token set.';
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        },
 
-            // Set Header
-            axios.interceptors.request.use((config) => {
-                config.headers["Authorization"] = `Bearer ${token}`
-                return config;
-            });
-            return true;
+        removeToken() {
+            localStorage.removeItem(process.env.SESSION_NAME);
         },
 
         removeSession() {
-            // Remove Session
-            localStorage.removeItem(process.env.SESSION_NAME);
-            axios.interceptors.request.use((config) => {
-                config.headers["Authorization"] = '';
-                return config;
-            });  
-
-            // User Auth
+            axios.defaults.headers.common['Authorization'] = '';
             this.access.user = false;
             this.access.admin = false;
-            this.access.role = 'guest';
-
             this.user = {
                 id: 0,
                 name: 'User',
                 avatar: '',
                 email: ''
             };
+        },
+
+        removeAdmin() {
+            this.access.admin = false;
         },
     }
 });

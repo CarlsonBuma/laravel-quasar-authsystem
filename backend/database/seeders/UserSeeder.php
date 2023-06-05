@@ -15,11 +15,21 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
-            'name' => 'Admin',
+        // User
+        $userTable = DB::table('users');
+        $userTable->insert([
+            'name' => 'Owner',
             'email' =>'admin@admin.com',
             'email_verified_at' => now(),
             'password' => Hash::make('admin'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Admin
+        DB::table('admins')->insert([
+            'user_id' => $userTable->where('email', '=', 'admin@admin.com')->first()->id,
+            'role' =>'Owner',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

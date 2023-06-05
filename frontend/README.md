@@ -1,44 +1,45 @@
-# System Design
- > Start: 24.12.2023, Carlson
- > Version 1.0.0, 06.01.2023
-    > Basic System Setup, 06.01.2023
+# Setup
+## Initialization
+ > npm install
+ > Optional: Setup \src\modules\cookieConsent.js
+ > Edit .env file
+ > Setup package.json
 
-## Infrastructure
-- quasar (framework)
-- vue-router (spa-approach)
-- apis (axios-request)
-- toast (response-handler)
-- store (pinia)
-- globals (static classes)
+## Architecture
+> quasar (framework)
+> vue-router (spa-approach)
+> apis (axios-request)
+> store (pinia)
+> modules (static classes)
+   > globals.js
+   > responseHandling.js (this.$toast. | load() | success(Str) | error( Obj., Str))
 
-## Defaults
- > System Design
-    > Basic Teamplate Design
-    > Guest & User Interface "$store.user"
-    > Error Handling "$toast(response)"
- > Legal & Compliance
-    > Impressum, Terms & Conditions, Sitemap
-    > GDPR
-        > Cookie Consens
- > Account Management
-    > CSRF
-    > Login
-        > Auth
-        > User Management
-            > change Avatar
-            > change Name
-            > change Password
-            > transfer Account (change Email)
-            > delete Account
-        > Logout
-    > Create Account
-        > Verify email
-    > Password reset
+## Structure
+ > src/App.vue, application initialization
+ > src/apis
+    > auth.js, for authinterface
+    > user.js, for userinterface
+    > visitor.js, for publicinterface
+    > admin.js, for admininterface
+ > src/router
+    > index.js, setup routes
+    > auth.js, for authinterface
+    > user.js, for userinterface
+    > visitor.js, for publicinterface
+    > admin.js, for admininterface
+ > src/store
+    > index.js, initialization of Pinia
+    > userAccess.js, manage userinterface
+ > src/modules
+    > globals.js
+    > cookieConsent.js
+    > responseHandling.js
+        > errorHandling.js
+ > src/boot
+    > default.js, setup projectattributes
+    > axios.js, setup requesthandling
 
 ## Third-Parties Implementations
-[x] Vue3 Draggable
-    > https://github.com/shkilo/vue3-draggable
-    
 [X] Cookie-Consent (GDPR, eg. for Google Analytics)
     > https://github.com/eyecatchup/vue-cookieconsent
     > Implemented: "App.js" & "quasar.config.js" (as boot-file)
@@ -48,3 +49,6 @@
             > Setup Tag Manager Account (Google Tag Manager)
             > Import Script to Bootfiles "cookie-consens.js"
             > Define in Cookie-Consent
+
+# Deployment
+See Vue 3

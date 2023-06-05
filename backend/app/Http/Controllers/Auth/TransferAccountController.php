@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Auth;
+namespace App\Http\Controllers\Auth;
 
 use Exception;
 use App\Models\User;
@@ -19,8 +19,8 @@ class TransferAccountController extends Controller
 {
     /**
      ** Transfer Account to new Emailadress
-     **  > Before changing email, user has to verify his new email adress
-     *
+     **  > Before changing email, new user has to verify his new email adress
+     **  > Old user is still able to undone its transfer, by verifying its old email again
      * @param Request $request
      * @return void
      */
@@ -37,16 +37,17 @@ class TransferAccountController extends Controller
             $user = Auth::user();
             if(!Hash::check($password, $user->password)) throw new Exception('Ups, the given password is incorrect.');
             
-            // Send Token
-            $this->sendAccountToken($user, $newEmail);
+            // Process Transfer
+            $token = Str::random(255);
+            $this->sendAccountToken($user, $newEmail, $token);
             $userAccount = User::where('id', Auth::id())->first();
             $userAccount->email_verified_at = null;
+            $userAccount->token = $token;
             $userAccount->save();
 
             // Logout
             $userLog = new UserAuthController;
             $userLog->logoutUser($request);
-
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
@@ -62,37 +63,20 @@ class TransferAccountController extends Controller
      * ** Request Transfer Email
      **  > Generate URL, with Token 
      **  > Send verification link to new email
-     *
      * @param User $user
      * @param String $newEmail
      * @return void
      */
-    public function sendAccountToken(User $user, String $newEmail = '')
+    private function sendAccountToken(User $user, String $newEmail = '', $token)
     {
-        try {
-            // Token for verification
-            $token = Str::random(125);
+        // Send verification Link
+        $verificationLink = Modulate::signedLink('transfer.account', [
+            'email' => $user->email,
+            'token' => $token,
+            'transfer' => $newEmail
+        ]);
 
-            // Send verification Link
-            $verificationLink = Modulate::signedLink('transfer.account', [
-                'email' => $user->email,
-                'token' => $token,
-                'transfer' => $newEmail
-            ]);
-
-            Mail::to($newEmail)->send(new SendEmailVerification($verificationLink, $user));
-
-            // Verification
-            PasswordReset::updateOrCreate([
-                'email' => $user->email
-            ], [
-                'token' => Hash::make($token),
-                'created_at' => now()
-            ]);
-
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
+        Mail::to($newEmail)->send(new SendEmailVerification($verificationLink, $user)); 
     }
 
     /**
@@ -125,33 +109,20 @@ class TransferAccountController extends Controller
             }
 
             // Validate Signature
-            if(! ($email && $token && $transfer)) throw new Exception('No valid verification key.');
             if (!$request->hasValidSignature()) throw new Exception('Link has been expired.');
-
-            // Verify Credentials
-            $verifiedToken = PasswordReset::where('email', $email)->first();
-            if(!$verifiedToken) throw new Exception('No valid verification key.');
-            if (!Hash::check($token, $verifiedToken->token)) throw new Exception('No valid verification key.');
-
-            // Check Email Unique
-            if(User::where('email', $transfer)->exists()) throw new Exception('Ups, the new email is already taken.');
-            $verifiedToken->delete();
-
-            // Change email
             $user = User::where([
                 'email' => $email,
+                'email_verified_at' => null,
+                'token' => $token
             ])->first();
 
-            
-            if(!$user) throw new Exception('This user does not exist anymore.');
-            if($user->email_verified_at) throw new Exception('This user is already verified.');
-
+            // Set User
+            if(!$user) throw new Exception('Invalid verification key.');
             $user->email = $transfer;
-            $user->email_verified_at = now();
             $user->password = Hash::make($password);
-            $user->remember_token = null;
+            $user->email_verified_at = now();
+            $user->token = null;
             $user->save();
-
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),

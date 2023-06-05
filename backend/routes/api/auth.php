@@ -1,19 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Actions\Auth\RegisterController;
-use App\Actions\Auth\UserAuthController;
-use App\Actions\Auth\UserProfileController;
-use App\Actions\Auth\PasswordResetController;
-use App\Actions\Auth\TransferAccountController;
-use App\Actions\Auth\EmailVerificationController;
+use App\Http\Controllers\Auth\UserAuthController;
+use App\Http\Controllers\Auth\UserProfileController;
+use App\Http\Controllers\Auth\CreateAccountController;
+use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\TransferAccountController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 
 /*
  * AUTH System - User Session
- *  > CSRF: "/sanctum/csrf-cookie"
- *  > Login
- *      > AUTH
- *      > Logout
  *  > Create Account
  *      > Verify Email
  *      > Request verify email 
@@ -22,23 +18,22 @@ use App\Actions\Auth\EmailVerificationController;
  *      > Reset Password
  *  > Verify new Email
  */
-Route::post('/login', [UserAuthController::class, 'loginUser'])
-    ->middleware(['throttle:6,1'])    
-    ->name('login');
 
 // Create Account
-Route::post('/create-account', [RegisterController::class, 'register'])
+Route::post('/create-account', [CreateAccountController::class, 'register'])
     ->name('create.account');
 
 // Email Verification
-Route::post('/email-verification-request', [EmailVerificationController::class, 'emailVerificationRequest'])
+Route::post('/email-verification-request', [EmailVerificationController::class, 'sendToken'])
+    ->middleware(['throttle:5,1'])
     ->name('email.verification.request');
-Route::get('/email-verification/{email}/{token}', [EmailVerificationController::class, 'emailVerification'])
-    ->middleware(['throttle:6,1'])
+Route::put('/email-verification/{email}/{token}', [EmailVerificationController::class, 'verifyToken'])
+    ->middleware(['throttle:5,1'])
     ->name('email.verification');
 
 // Password Reset
 Route::post('/password-reset-request', [PasswordResetController::class, 'passwordResetRequest'])
+    ->middleware(['throttle:6,1'])
     ->name('password.reset.request');
 Route::put('/password-reset/{email}/{token}', [PasswordResetController::class, 'passwordReset'])
     ->middleware(['throttle:6,1'])
@@ -50,19 +45,26 @@ Route::put('/transfer-account/{email}/{token}/{transfer}', [TransferAccountContr
     ->middleware(['throttle:6,1'])
     ->name('transfer.account');
 
-/*
- * Auth by "Sanctum"
- * User - Account Management
- *  > change Avatar
- *  > change Name
- *  > change Password
- *  > > Change Email
- *      > Request changing email
- *      > Verify transfer
- *  > delete Account
+/**
+ ** Auth by "Laravel Passport"
+ **  > Login
+ **      > AUTH
+ **      > Logout
+ ** User - Account Management
+ **  > change Avatar
+ **  > change Name
+ **  > change Password
+ **     > Change Email
+ **     > Request changing email
+ **     > Verify transfer
+ **  > delete Account
  */
-Route::middleware(['auth:api', 'email_verified'])->group(function () {
 
+Route::post('/login', [UserAuthController::class, 'loginUser'])
+    ->middleware(['throttle:6,1'])    
+    ->name('login');
+
+Route::middleware(['auth:api', 'email_verified'])->group(function () {
     // Auth
     Route::get('/auth', [UserAuthController::class, 'authUser'])
         ->name('auth');

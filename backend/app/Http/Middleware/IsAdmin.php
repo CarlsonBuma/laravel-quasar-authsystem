@@ -23,7 +23,7 @@ class IsAdmin
         }
 
         return response()->json([
-            'message' => 'Ups, you are not verified.',
+            'message' => 'Ups, you are no admin.',
         ], 401);  
     }
 }
