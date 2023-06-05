@@ -2,8 +2,8 @@
 Full Auth System - v.1.0
 by Carlson, 08.01.2023
 
-## Current Bugs: 08.01.2023
- 1. Auth System: Transfer Account (simple?)
+## Current Bugs: 05.06.2023
+ > Please let me know!
 
 ## System Overview - Frontend (Vue3) & Backend (Laravel10)
   - Globals
