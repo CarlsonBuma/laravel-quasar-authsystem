@@ -8,7 +8,6 @@ use App\Modules\Modulate;
 use App\Modules\Password;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\PasswordReset;
 use App\Mail\SendEmailVerification;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -45,9 +44,8 @@ class TransferAccountController extends Controller
             $userAccount->token = $token;
             $userAccount->save();
 
-            // Logout
-            $userLog = new UserAuthController;
-            $userLog->logoutUser($request);
+            // Remove Token
+            $user->token()->delete();
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),

@@ -13,11 +13,13 @@ class EmailVerified
     {   
         try {
             $user = Auth::user();
-            if($user && $user->email_verified_at) return $next($request);
+            if(!$user) throw 'Not verified.';
+            else if($user->email_verified_at) return $next($request);
+            else $user->token()->delete();
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
-            ], 400);  
+            ], 401);  
         }
 
         // Email not verified

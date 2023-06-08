@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Controllers\Auth\UserAuthController;
 use App\Http\Controllers\Controller;
 
 class UserProfileController extends Controller
@@ -156,7 +155,6 @@ class UserProfileController extends Controller
      ** Delete User Account
      **  > Remove Avatar
      **  > Logout User
-     *
      * @param Request $request
      * @return void
      */
@@ -182,12 +180,8 @@ class UserProfileController extends Controller
             }
 
             // Delete Userdata
+            // Oauth CASCADE
             $user->delete();
-
-            // Logout
-            $userLog = new UserAuthController;
-            $userLog->logoutUser($request);
-
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
@@ -195,7 +189,7 @@ class UserProfileController extends Controller
         }
 
         return response()->json([
-            'message' => 'Thanks for the use of our solution! Your account has been removed.',
+            'message' => 'Your account has been removed.',
         ], 200);
     }
 }
