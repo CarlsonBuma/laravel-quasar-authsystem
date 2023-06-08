@@ -6,11 +6,13 @@ by Carlson, 08.01.2023
  > Please let me know!
  > hello@gigup.ch
 
-## System Overview - Frontend (Vue3) & Backend (Laravel10)
-  - Globals
+## System Overview - Frontend (Vue3) & Backend (Laravel 10)
+ - Globals Backend
+    - Laravel Middleware: Laravel Passport
+ - Globals Frontend
     - Cookie Consent (cookieConsent.js)
     - Request Handling (Toast.js)
- - User
+ - Userauth
     - Login, Logout
     - Register + Email verification
     - Reset password
@@ -21,8 +23,6 @@ by Carlson, 08.01.2023
         - Change Password
         - Transfer Account (Change email)
         - Delete Account
- - Guest
-    - Legal & Compliance
 
 ## Folder Structure
  - backend
@@ -44,6 +44,7 @@ by Carlson, 08.01.2023
 ## Frameworks
  - backend: 
      - Laravel 10
+        - Auth: Laravel Passport
  - frontend: 
      - Vue 3
      - Quasar, 2.12.0
