@@ -1,9 +1,10 @@
 # System Overview
-Full Auth System - v.3.1, 05.06.2023 
+Full Auth System - v.3.1, 08.06.2023 
 by Carlson, 08.01.2023
 
-## Current Bugs: 05.06.2023
+## Current Bugs / Improvements
  > Please let me know!
+ > hello@gigup.ch
 
 ## System Overview - Frontend (Vue3) & Backend (Laravel10)
   - Globals
@@ -13,12 +14,12 @@ by Carlson, 08.01.2023
     - Login, Logout
     - Register + Email verification
     - Reset password
-    - Transfer Email
+    - Transfer Account
     - User Profile
         - Change Avatar
         - Change Name
         - Change Password
-        - Transfer Email
+        - Transfer Account (Change email)
         - Delete Account
  - Guest
     - Legal & Compliance
@@ -42,11 +43,12 @@ by Carlson, 08.01.2023
 
 ## Frameworks
  - backend: 
-     - Laravel v10 - PHP 8.1
+     - Laravel 10
  - frontend: 
-     - Vue.js        - Node 18.7.0
-     - Quasar        - Vue - Framework 1.3.2
-     - Axios         - API Requests
+     - Vue 3
+     - Quasar, 2.12.0
+     - Axios
+     - Pinia
 
 ## Files
  - Start Environment - "start in terminal":
