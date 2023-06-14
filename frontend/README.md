@@ -2,8 +2,7 @@
 ## Initialization
  - npm install
  - Optional: Setup \src\modules\cookieConsent.js
- - Edit .env file
- - Setup package.json
+ - Create .env file
 
 ## Architecture
 - quasar (framework)

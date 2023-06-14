@@ -7,6 +7,7 @@
         > Bugfix Logout: Removetoken
         > Improvements Middleware: Email_verified
     > User Auth System - Code improvements, 3.1.0, 14.06.2023
+        > Bugfix DB Migration: token nullable
 
 ## Testing
  1. User Auth System - 06.01.2023 | safeNsound

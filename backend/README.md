@@ -1,6 +1,7 @@
 # Initialization
  - php artisan --version
  - composer install
+ - create .env file
 
 ## Migrage Database
  - php artisan migrate
@@ -12,6 +13,7 @@
 
 ## Storage
  - php artisan storage:link
+ - Note: After your first avatar has been stored, you must "storage:link" again!
 
 ## Setup Mail Driver
  - Choose your Mail Driver
