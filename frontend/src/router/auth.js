@@ -1,28 +1,19 @@
 import store from "src/stores/userAccess.js";
 
 const routesAuth = [
-    
-    // Account Management
     {
         path: "/create-account",
         name: "CreateNewAccount",
         component: () => import('src/pages/auth/CreateNewAccount.vue'),
-    },
-
-    // Password Reset
-    {
+    }, {
         path: "/password-reset-request",
         name: "PasswordResetRequest",
         component: () => import('src/pages/auth/PasswordResetRequest.vue'),
-    },
-    {
+    }, {
         path: "/password-reset/:email/:key",
         name: "PasswordSet",
         component: () => import('src/pages/auth/PasswordReset.vue'),
-    },
-
-    // Email Verification
-    {
+    }, {
         path: "/email-verification-request/:email",
         name: "EmailVerificationRequest",
         component: () => import('src/pages/auth/EmailVerificationRequest.vue'),
@@ -31,15 +22,12 @@ const routesAuth = [
         path: "/email-verification/:email/:key",
         name: "EmailAccountVerification",
         component: () => import('src/pages/auth/EmailAccountVerification.vue'),
-    }, 
-
-    // Transfer Account
-    {
+    }, {
         path: "/transfer-account/:email/:key/:transfer",
         name: "TransferAccount",
         component: () => import('src/pages/auth/TransferAccount.vue'),
     },
-
+    
     // User Session
     {
         path: "/login",

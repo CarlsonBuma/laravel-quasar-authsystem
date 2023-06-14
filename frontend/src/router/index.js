@@ -1,3 +1,4 @@
+'use strict';
 import { route } from 'quasar/wrappers';
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router';
 import routesAuth from './auth';

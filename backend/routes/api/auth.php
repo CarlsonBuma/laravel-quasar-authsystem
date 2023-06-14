@@ -32,16 +32,16 @@ Route::put('/email-verification/{email}/{token}', [EmailVerificationController::
     ->name('email.verification');
 
 // Password Reset
-Route::post('/password-reset-request', [PasswordResetController::class, 'passwordResetRequest'])
+Route::post('/password-reset-request', [PasswordResetController::class, 'sendToken'])
     ->middleware(['throttle:6,1'])
     ->name('password.reset.request');
-Route::put('/password-reset/{email}/{token}', [PasswordResetController::class, 'passwordReset'])
+Route::put('/password-reset/{email}/{token}', [PasswordResetController::class, 'verifyToken'])
     ->middleware(['throttle:6,1'])
     ->name('password.reset');
 
 // Transfer Account
 // Update Email, Set new Password, Verify Email
-Route::put('/transfer-account/{email}/{token}/{transfer}', [TransferAccountController::class, 'transferAccount'])
+Route::put('/transfer-account/{email}/{token}/{transfer}', [TransferAccountController::class, 'verifyToken'])
     ->middleware(['throttle:6,1'])
     ->name('transfer.account');
 
@@ -83,7 +83,7 @@ Route::middleware(['auth:api', 'email_verified'])->group(function () {
     
     // Transfer Account Request 
     // Email will be updated, after Emailverification, email_verified_at = null
-    Route::post('/user-transfer-account', [TransferAccountController::class, 'transferAccountRequest'])
+    Route::post('/user-transfer-account', [TransferAccountController::class, 'sendToken'])
         ->name('user.transfer.account');
     
     // Delete User

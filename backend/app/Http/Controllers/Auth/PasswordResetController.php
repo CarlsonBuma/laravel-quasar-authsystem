@@ -22,7 +22,7 @@ class PasswordResetController extends Controller
      * @param Request $request
      * @return void
      */
-    public function passwordResetRequest(Request $request)
+    public function sendToken(Request $request)
     {
         try {
             $data = $request->validate([
@@ -64,7 +64,7 @@ class PasswordResetController extends Controller
      * @param Request $request
      * @return void
      */
-    public function passwordReset(String $email, String $token, Request $request) 
+    public function verifyToken(String $email, String $token, Request $request) 
     {
         try {
             

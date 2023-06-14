@@ -23,7 +23,7 @@ class TransferAccountController extends Controller
      * @param Request $request
      * @return void
      */
-    public function transferAccountRequest(Request $request)
+    public function sendToken(Request $request)
     {
         try {
             $data = $request->validate([
@@ -89,7 +89,7 @@ class TransferAccountController extends Controller
      * @param Request $request
      * @return void
      */
-    public function transferAccount(String $email, String $token, String $transfer, Request $request)
+    public function verifyToken(String $email, String $token, String $transfer, Request $request)
     {
         try {
 

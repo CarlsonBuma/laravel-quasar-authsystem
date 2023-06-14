@@ -1,4 +1,5 @@
 <template>
+
     <q-scroll-area class="fit">
         <q-list padding >    
             
@@ -46,20 +47,6 @@
                 </q-item-section>
                 <q-item-section>
                     Dashboard
-                </q-item-section>
-            </q-item>
-
-            <!-- User-Modules -->
-            <q-item 
-                @click="$router.push('/my-gigs')"
-                clickable 
-                v-ripple
-            >
-                <q-item-section avatar>
-                    <q-icon name="construction" />
-                </q-item-section>
-                <q-item-section>
-                    My Gigs
                 </q-item-section>
             </q-item>
 
@@ -111,6 +98,7 @@
             </q-item>
         </q-list>
     </q-scroll-area>
+
 </template>
 
 <script>

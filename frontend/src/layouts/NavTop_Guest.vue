@@ -46,16 +46,6 @@
                 class="gt-sm"
                 inline-label 
             >
-                <q-tab
-                    label="Card"
-                    name="card"
-                    @click="$router.push('card')"
-                />
-                <q-tab
-                    label="Table"
-                    name="table"
-                    @click="$router.push('table')"
-                />
                 <q-separator v-if="$canLogin" vertical inset />
                 <q-tab
                     v-if="$canLogin"
@@ -116,8 +106,8 @@
 </template>
 
 <script>
-
 import { ref } from 'vue';
+
 export default {
     name: 'NavTop',
     props: {

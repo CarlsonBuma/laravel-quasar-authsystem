@@ -1,6 +1,7 @@
 <template>
+
     <q-scroll-area class="fit">
-        <q-list padding>  
+        <q-list padding>
             
             <!-- User Profile -->
             <q-item 
@@ -82,6 +83,7 @@
             </q-item>
         </q-list>
     </q-scroll-area>
+    
 </template>
 
 <script>

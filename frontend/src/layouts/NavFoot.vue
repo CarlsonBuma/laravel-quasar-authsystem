@@ -1,4 +1,5 @@
 <template>
+
     <div class="fit row wrap justify-center items-center content-center">
         <div class="col-12 col-md-3 q-pa-lg text-center">
             <h6>About</h6>
@@ -64,6 +65,7 @@
             
         </div>
     </div>
+    
 </template>
 
 <script>

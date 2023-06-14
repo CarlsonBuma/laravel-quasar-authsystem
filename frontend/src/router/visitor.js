@@ -2,8 +2,11 @@ const routesGuest = [
     {
         path: '/',
         name: 'Welcome',
-        component: () => import('src/pages/Welcome.vue'),
-    }, {
+        component: () => import('src/pages/guest/Welcome.vue'),
+    },
+    
+    // Legal & Compliance
+    {
         path: "/contact",
         name: "Contact",
         component: () => import('src/pages/guest/about/Contact.vue'),
@@ -20,29 +23,6 @@ const routesGuest = [
         name: "Sitemap",
         component: () => import('src/pages/guest/compliance/Sitemap.vue'),
     },
-
-    // Businessbox
-    {
-        path: "/table",
-        name: "TableTemplate",
-        component: () => import('src/pages/guest/TableTemplate.vue'),
-    }, 
-    
-    {
-        path: "/card",
-        name: "CardResponse",
-        component: () => import('src/pages/guest/CardResponse.vue'),
-    }
-    // {
-    //     path: "/about-us",
-    //     name: "AboutUs",
-    //     component: AboutUs,
-    // },
-    // {
-    //     path: "/how-to",
-    //     name: "HowTo",
-    //     component: HowTo,
-    // },
 ];
 
 export default routesGuest;
