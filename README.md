@@ -2,6 +2,9 @@
 Full Auth System - v.3.1, 08.06.2023 
 by Carlson, 08.01.2023
 
+Public Git Repo: 
+https://github.com/CarlsonBuma/Laravel-Quasar-Authsystem
+
 ## Current Bugs / Improvements
  > Please let me know!
  > hello@gigup.ch

@@ -1,4 +1,4 @@
-import store from "src/stores/storeUser.js";
+import store from "src/stores/userAccess.js";
 
 const routesAuth = [
     

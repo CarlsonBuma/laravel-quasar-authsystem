@@ -1,7 +1,7 @@
 'use strict';
 
 import { boot } from 'quasar/wrappers';
-import userStore from "src/stores/storeUser.js";
+import userAccess from "src/stores/userAccess.js";
 import CookieConsent from 'vue-cookieconsent';
 import { ResponseHandler } from 'src/modules/responseHandling';
 
@@ -16,7 +16,7 @@ export default boot(({ app, router }) => {
     
     /* Userstore */
     app.config.globalProperties.$canLogin = true; 
-    app.config.globalProperties.$store = userStore();
+    app.config.globalProperties.$store = userAccess();
 
     /* Load Toaster */
     app.config.globalProperties.$toast = new ResponseHandler(router);

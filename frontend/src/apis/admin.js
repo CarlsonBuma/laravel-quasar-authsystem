@@ -10,7 +10,7 @@ import axios from 'axios';
  *      > Logout
  */
 const loginBackpanel = () => {
-    return axios.post("/admin-backpanel");
+    return axios.get("/admin-backpanel");
 }
 
 export { 

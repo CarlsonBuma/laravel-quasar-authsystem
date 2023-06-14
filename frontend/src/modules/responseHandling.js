@@ -1,7 +1,7 @@
 'use strict';
 
 import { Notify } from 'quasar';
-import store from "src/stores/storeUser.js";
+import store from "src/stores/userAccess.js";
 
 /* ***********************************************
  * Request Handling
