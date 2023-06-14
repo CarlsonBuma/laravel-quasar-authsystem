@@ -1,6 +1,6 @@
 # Setup
 ## Initialization
- - npm install s
+ - npm install
  - Optional: Setup \src\modules\cookieConsent.js
  - Create .env file
 
