@@ -13,6 +13,7 @@
 
 ## Files
 /backend/storage/*.key
+/backend/composer.lock
 /backend/.env
 /backend/.env.backup
 /backend/.env.production
