@@ -8,6 +8,7 @@ use App\Modules\Modulate;
 use App\Modules\Password;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Mail\SendEmailVerification;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,7 @@ class TransferAccountController extends Controller
      ** Transfer Account to new Emailadress
      **  > Before changing email, new user has to verify his new email adress
      **  > Old user is still able to undone its transfer, by verifying its old email again
+     *
      * @param Request $request
      * @return void
      */
@@ -37,16 +39,29 @@ class TransferAccountController extends Controller
             if(!Hash::check($password, $user->password)) throw new Exception('Ups, the given password is incorrect.');
             
             // Process Transfer
-            $token = Str::random(255);
-            $this->sendAccountToken($user, $newEmail, $token);
             $userAccount = User::where('id', Auth::id())->first();
-            $userAccount->email_verified_at = null;
-            $userAccount->token = $token;
-            $userAccount->save();
+            DB::beginTransaction();
 
-            // Remove Token
-            $user->token()->delete();
+                // Start Transfer
+                $token = Str::random(255);
+                $userAccount->email_verified_at = null;
+                $userAccount->token = $token;
+                $userAccount->save();
+
+                // Send verification Link
+                $verificationLink = Modulate::signedLink('transfer.account', [
+                    'email' => $user->email,
+                    'token' => $token,
+                    'transfer' => $newEmail
+                ]);
+
+                Mail::to($newEmail)->send(new SendEmailVerification($verificationLink, $user)); 
+
+                // Remove Token
+                $user->token()->delete();
+            DB::commit(); 
         } catch (Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'message' => $e->getMessage(),
             ], 422);
@@ -55,26 +70,6 @@ class TransferAccountController extends Controller
         return response()->json([
             'message' => 'Transfering user in progress...',
         ], 200);
-    }
-
-    /**
-     * ** Request Transfer Email
-     **  > Generate URL, with Token 
-     **  > Send verification link to new email
-     * @param User $user
-     * @param String $newEmail
-     * @return void
-     */
-    private function sendAccountToken(User $user, String $newEmail = '', $token)
-    {
-        // Send verification Link
-        $verificationLink = Modulate::signedLink('transfer.account', [
-            'email' => $user->email,
-            'token' => $token,
-            'transfer' => $newEmail
-        ]);
-
-        Mail::to($newEmail)->send(new SendEmailVerification($verificationLink, $user)); 
     }
 
     /**
@@ -102,12 +97,12 @@ class TransferAccountController extends Controller
             if(!$data['terms']) throw new Exception('Please agree with our Terms & Conditions.');
             $password = $data['password'];
             $verifyPassword = new Password;
-            if(!$verifyPassword->verifyPassword($password)){
-                throw new Exception($verifyPassword->error);
-            }
+            if(!$verifyPassword->verifyPassword($password)) throw new Exception($verifyPassword->error);
 
             // Validate Signature
             if (!$request->hasValidSignature()) throw new Exception('Link has been expired.');
+            
+            // Validate Token
             $user = User::where([
                 'email' => $email,
                 'email_verified_at' => null,
@@ -127,7 +122,10 @@ class TransferAccountController extends Controller
             ], 422);
         }
 
+        // Login
+        $token = $user->createToken('user')->accessToken;
         return response()->json([
+            'token' => $token,
             'message' => 'Your account has been transfered! Please login with your new email.',
         ], 200);
     }

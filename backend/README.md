@@ -2,6 +2,8 @@
  - php artisan --version
  - composer install
  - create .env file
+ - setup .env file
+    - 
 
 ## Migrage Database
  - php artisan migrate

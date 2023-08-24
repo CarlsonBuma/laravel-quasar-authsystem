@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use App\Models\Admin;
+use App\Models\Labels;
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -17,6 +18,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'email_verified_at',
         'avatar',
         'password',
         'token'
@@ -32,6 +34,10 @@ class User extends Authenticatable
 
     public function user_is_verified() {
         return $this->email_verified_at ? true : false;
+    }
+
+    public function has_labels() {
+        return $this->hasMany(Labels::class, 'user_id');
     }
 
     public function is_admin() {

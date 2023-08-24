@@ -16,6 +16,7 @@ class CreateAccountController extends Controller
      **  > Creates new User
      **  > Verified: Null
      **  > Verification Request must be executed manually by user
+     *
      * @param Request $request
      * @return void
      */

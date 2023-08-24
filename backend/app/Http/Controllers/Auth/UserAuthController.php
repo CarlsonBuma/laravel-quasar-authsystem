@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use Exception;
+use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
@@ -13,11 +15,12 @@ class UserAuthController extends Controller
     /**
      ** Get User Data
      **     > User Credentials
-     **     > ...
+     *
      * @return void
      */
     public function authUser()
     {
+        // User
         $user = Auth::user();
         $isAdmin = Auth::user()->is_admin;
         $avatarPath = $user->avatar
@@ -29,7 +32,7 @@ class UserAuthController extends Controller
             'name' => $user->name,
             'avatar' => $avatarPath,
             'email' => $user->email,
-            'is_admin' => $isAdmin ? true : false
+            'is_admin' => $isAdmin ? true : false,
         ], 200);
     }
 
@@ -38,6 +41,7 @@ class UserAuthController extends Controller
      **  > Attemps-Middleware: throttle:6,1
      **  > Handle Verified Email
      **  > Start Session
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -49,24 +53,26 @@ class UserAuthController extends Controller
                 'password' => ['required'],
             ]);
 
+            // Check if Email is verified
+            $user = User::where('email', $credentials['email'])->first();
+            if($user && !$user->email_verified_at instanceof Carbon) {
+                return response()->json([
+                    'status' => 'email_not_verified',
+                    'email' => $credentials['email'],
+                    'message' => 'Please verify your email before accessing your account.',
+                ], 401);
+            }
+
             // Check Credentials
             if (Auth::attempt([
                     'email' => $credentials['email'],
                     'password' => $credentials['password']
             ])){
-                if(Auth::user()->email_verified_at) {
-                    $token = Auth::user()->createToken('user')->accessToken;
-                    return response()->json([
-                        'token' => $token,
-                        'message' => 'Session started.'
-                    ], 200);
-                } else {
-                    return response()->json([
-                        'status' => 'email_not_verified',
-                        'email' => $credentials['email'],
-                        'message' => 'Please verify your email before accessing your account.',
-                    ], 401);
-                }
+                $token = Auth::user()->createToken('user')->accessToken;
+                return response()->json([
+                    'token' => $token,
+                    'message' => 'Session started.'
+                ], 200);
             }
         } catch (Exception $e) {
             return response()->json([

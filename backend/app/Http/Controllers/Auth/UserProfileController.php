@@ -22,6 +22,7 @@ class UserProfileController extends Controller
      **      > Link new Avatar with DB
      **  > Delete Avatar
      **      > Delete Old Avatar 
+     *
      * @param Request $request
      * @return void
      */
@@ -155,6 +156,7 @@ class UserProfileController extends Controller
      ** Delete User Account
      **  > Remove Avatar
      **  > Logout User
+     *
      * @param Request $request
      * @return void
      */
