@@ -6,29 +6,22 @@
         :style="{
             width: '100%',
             maxWidth: cardWidth ? cardWidth : '420px', 
-            minWidth: '320px'
+        
         }" 
     >
+
         <!-- Actions -->
         <q-card-section v-if="allowActions" horizontal>
             <slot name="head" />
-            <q-card-actions 
-                class="justify-around"
-                vertical
-            >
+            <q-card-actions class="justify-around" vertical>
                 <slot name="actions" />
             </q-card-actions>
         </q-card-section>
-        <q-separator v-if="allowActions" />
+       
 
-        <!-- Card Body -->
-        <q-card-section>
-
-            <!-- Title -->
-            <div
-                v-if="title" 
-                class="flex items-center text-h5 _overflow-hidden"
-            >
+        <!-- Card Content -->
+        <q-card-section v-if="title">
+            <div class="flex items-center _overflow-hidden">
                 
                 <!-- Navigation: Go back -->
                 <q-btn 
@@ -44,6 +37,7 @@
                 <q-icon
                     v-else-if="iconClass" 
                     :name="iconClass"
+                    size="22px"
                     :color="iconColor"
                     class="q-ma-sm"
                 >
@@ -53,7 +47,7 @@
                 </q-icon>
 
                 <!-- Title -->
-               {{ title }}
+               <p class="q-ma-none text-h6">{{ title }}</p>
             </div>
 
             <!-- Description -->
@@ -61,29 +55,24 @@
             
             <!-- Header Icon -->
             <q-separator v-if="iconHeader" class="q-mt-md q-mb-lg" />
-            <div 
-                v-if="iconHeader" 
-                class="flex justify-center"
-            >
+            <div v-if="iconHeader" class="flex justify-center">
                 <q-icon
                     :name="iconHeader"
                     color="primary" 
-                    size="170px" 
+                    size="150px" 
                 />
             </div>
 
-            <!-- Header -->
-            <!-- <div class="w-100 text-center q-mb-md">
-                <slot name="header" />
-            </div> -->
+            <div v-if="title">
+                <!-- Body -->
+                <q-separator class="q-mt-md q-mb-lg" />
+                <slot />
+                <slot name="bottom_slot" /> 
 
-            <!-- Body -->
-            <q-separator class="q-mt-md q-mb-lg" />
-            <slot />
-            <slot name="bottom_slot" /> 
-
-            <q-separator class="q-mt-md q-mb-md"/>
-            <p class="text-caption q-ml-sm q-mr-sm"><em>{{ note }}</em></p>
+                <!-- Note -->
+                <q-separator class="q-mt-md q-mb-md"/>
+                <p class="text-caption q-ml-sm q-mr-sm"><em>{{ note }}</em></p>
+            </div>
         </q-card-section>
     </q-card>
     

@@ -2,95 +2,101 @@
     
     <q-page id="page-wrapper">
 
+        <!-- Left Navigation -->
+        <q-drawer
+            v-if="leftDrawer"
+            v-model="$drawerLeft.value"
+            show-if-above
+            bordered
+        >
+            <slot name="leftDrawer"/>
+        </q-drawer>
+        
         <!-- Refresher -->
         <q-pull-to-refresh 
             :disable="!allowRefresh"
             @refresh="(done) => refresh(done)"
+            class="w-100"
         >
-            <!-- Header -->  
-            <q-card
-                v-if="title" 
-                class="q-ma-md q-mt-lg"
-                bordered
-            >
-                <q-card-section class="row">
-                    <!-- Head -->
-                    <div class="col flex items-center">
-                        <div>
-                            <div class="text-h6">{{title}}</div>
-                            <div class="text-caption">{{subtitle}}</div>
-                            <q-breadcrumbs>
-                                <q-breadcrumbs-el
-                                    v-for="(dir, index) in directory" 
-                                    :key="index"
-                                    :label="dir.label" 
-                                    :to="dir.redirect"
-                                />
-                            </q-breadcrumbs>
-                        </div>
+            <!-- Header -->
+            <div v-if="title">
+                <div class="row">
+                    <div class="col">
+                        <p class="text-subtitle1 q-ma-md">
+                            <q-btn 
+                                v-if="goBack"
+                                @click="$router.go(-1)"
+                                flat 
+                                round 
+                                size="sm"
+                                text-color="primary" 
+                                icon="arrow_left"
+                            />
+                            <span class="q-ml-xs">{{ title }}</span>
+                        </p>
                     </div>
-                    
-                    <!-- Actions --> 
-                    <div class="flex content-center">
+                    <div class="col-auto flex justify-end items-center q-mr-md q-pb-sm">
                         <slot name="actions"/>
                     </div>
-                </q-card-section>
-            </q-card>
-
-            <!-- Content -->
-            <div 
-                class="flex justify-center q-pa-lg q-mb-lg"
-                :class="{
-                    'q-pt-sm': !title,   
-                }"
-            >
-                <slot />
+                </div>
+                <q-separator class="q-mb-md" />
             </div>
+            
+            <!-- Content -->
+            <div v-if="rendering" class="flex justify-center q-mt-md">
+                <q-spinner-bars size="74px" color="purple" />
+            </div>
+            <div v-else class="flex justify-center w-100 q-pt-md q-pl-xs q-pl-md-md q-pr-xs q-pr-md-md q-pb-xl" >
+                <slot />
+            </div> 
         </q-pull-to-refresh>
     </q-page>
 
 </template>
 
 <script>
-import { QSpinnerGears } from 'quasar'
+    import { QSpinnerGears } from 'quasar'
+    export default {
+        name: 'PageWrapper',
 
-export default {
-    name: 'PageWrapper',
-
-    props: {
-        title: String,
-        subtitle: String,
-        directory: Array,
-        allowRefresh: Boolean,
-        rendering: Boolean
-    },
-
-    emits: [
-        'refresh'
-    ],
-
-    watch: {
-        rendering: function (value) {
-            value ? this.startRendering() : this.stopRendering()
-        },
-    },
-
-    methods: {
-        refresh(done) {
-            this.$emit('refresh');
-            done();
+        props: {
+            leftDrawer: Boolean,
+            title: String,
+            subtitle: String,
+            goBack: Boolean,
+            allowRefresh: Boolean,
+            rendering: Boolean,         // Navigation allowed
+            loading: Boolean,           // Navigation forbidden
+            overflow: Boolean,
         },
 
-        startRendering() {
-            this.$q.loading.show({
-                spinner: QSpinnerGears,
-                message: 'Loading data. Please wait...',
-            })
+        watch: {
+            loading(value) {
+                value ?  this.startRendering() : this.stopRendering();
+            },
         },
 
-        stopRendering() {
-            this.$q.loading.hide()
+        emits: [
+            'refresh'
+        ],
+
+        methods: {
+            refresh(done) {
+                this.$emit('refresh');
+                done();
+            },
+
+            startRendering() {
+                this.$q.loading.show({
+                    boxClass: 'page-loading-block',
+                    spinner: QSpinnerGears,
+                    message: 'Loading data. Please wait...',
+                })
+            },
+
+            stopRendering() {
+                this.$q.loading.hide()
+            }
         }
-    }
-};
+    };
 </script>

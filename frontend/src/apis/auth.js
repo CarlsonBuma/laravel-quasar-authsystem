@@ -1,5 +1,4 @@
 "use strict";
-
 import axios from 'axios';
 
 /** *******************************
@@ -35,11 +34,11 @@ const userLogout = () => {
  **      > Reset Password
  ************************************ */
 
-const createAccount = (user) => {
+const createAccount = (name, email, agreed) => {
     return axios.post("/create-account", {
-        'name': user.name,
-        'email': user.email,
-        'terms': user.agreed,
+        'name': name,
+        'email': email,
+        'terms': agreed,
     });
 }
 

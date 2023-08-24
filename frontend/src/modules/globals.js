@@ -12,7 +12,8 @@ const regRules = {
         min_length: /^(.{7,255})$/,         // 7 Characters
         capital_letter: /[A-Z]/,            // Capital Letter
         number: /\d/                        // Number
-    }
+    },
+    sanitizeLink: /^https?:\/\/|www\./
 };
 
 const passwordRequirements = (password, password_confirm) => {
@@ -25,5 +26,5 @@ const passwordRequirements = (password, password_confirm) => {
 
 export {
     regRules,
-    passwordRequirements
+    passwordRequirements,
 }

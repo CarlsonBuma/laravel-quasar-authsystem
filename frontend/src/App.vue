@@ -1,58 +1,36 @@
 <template>    
+    
     <div id="app-wrapper">
-        
-        <!-- Design -->
         <div id="app-design"></div>
-        
-        <!-- Layout: hHh lpr fff, lHh lpr fff -->
-        <q-layout view="lHh Lpr lff">
+        <q-layout view="hhh LpR fff">
             
             <!-- Header Top -->
             <q-header 
-                id="app-header"
-                elevated
+                reveal
+                elevated 
+                height-hint="98"
+                class="text-white"
                 :class="{
                     'bg-dark': $q.dark.isActive,
-                    'bg-white': !$q.dark.isActive,
-                    'text-white': $q.dark.isActive,
-                    'text-dark': !$q.dark.isActive,
+                    'bg-header-bright-mode': !$q.dark.isActive,
                 }">
-                <NavTopGuest
-                    v-if="!$store.access.user"
-                    :allowSubNav="true"
-                    :allowLeftDrawer="false"
-                    @drawerLeft="expandDrawerLeft = !expandDrawerLeft"
-                    @login="authUser()" 
+                <FeaturesUser 
+                    v-if="$user.access.user"
+                    :isAdmin="showAdmin"
+                    @logoutUser="logoutUser()"
+                    @showAdmin="showAdmin ? goDashboard() : goBackPanel()"
+                    @expandDrawer="$drawerLeft.value = !$drawerLeft.value"
                 />
-                <NavTopUser
-                    v-else-if="$store.access.user"
-                    :allowLeftDrawer="true"
-                    @showDrawerLeft="showDrawerLeft = true"
-                    @expandDrawerLeft="expandDrawerLeft = !expandDrawerLeft" 
+                <FeaturesGuest 
+                    v-else
+                    @authUser="authUser()"
+                    @expandDrawer="$drawerLeft.value = !$drawerLeft.value"
                 />
             </q-header>
 
-            <!-- Left - Drawers -->
-            <q-drawer
-                v-if="$store.access.user"
-                v-model="showDrawerLeft"
-                :mini="expandDrawerLeft"
-                show-if-above
-                bordered
-            >
-                <LeftDrawerAdmin 
-                    v-if="showAdmin && $store.access.admin" 
-                    @showAdmin="showAdmin = false"
-                />
-                <LeftDrawer 
-                    v-else
-                    @logout="logoutUser()"
-                    @showAdmin="showAdmin = true" 
-                />
-            </q-drawer>
-
             <!-- Content -->
             <q-page-container 
+                id="app-content"
                 :class="{
                     'background': !$q.dark.isActive,
                     'background-dark': $q.dark.isActive
@@ -61,12 +39,12 @@
                 <router-view 
                     @authorize="() => authUser()"
                     @removeSession="(message) => removeSession()"
+                    class="q-pt-lg"
                 />
             </q-page-container>
 
             <!-- Footer -->
             <q-footer
-                v-if="!$store.access.user"
                 bordered 
                 :class="{
                     'bg-dark': $q.dark.isActive,
@@ -74,69 +52,88 @@
                     'text-white': $q.dark.isActive,
                     'text-dark': !$q.dark.isActive,
                 }">
-                <NavFoot />
+                <FeaturesFoot />
             </q-footer>
         </q-layout>
     </div>
+    
 </template>
 
 <script>
 import { ref } from 'vue';
-import NavTopGuest from 'src/layouts/NavTop_Guest.vue';
-import NavTopUser from 'src/layouts/NavTop_User.vue';
-import NavFoot from 'src/layouts/NavFoot.vue';
-import LeftDrawer from 'src/layouts/LeftDrawer.vue';
-import LeftDrawerAdmin from 'src/layouts/LeftDrawerAdmin.vue';
-import CookieConsentOptions from 'src/modules/cookieConsent';
 import { userAuth, userLogout } from 'src/apis/auth.js';
+import FeaturesGuest from 'src/pages/layout/FeaturesGuest.vue';
+import FeaturesUser from 'src/pages/layout/FeaturesUser.vue';
+import FeaturesFoot from 'src/pages/layout/FeaturesFoot.vue';
+import CookieConsentOptions from 'src/modules/cookieConsent';
 
 export default {
     name: 'App',
     components: {
-        NavTopGuest, NavTopUser, NavFoot, LeftDrawer, LeftDrawerAdmin
+        FeaturesGuest, FeaturesUser, FeaturesFoot
     },
+
+    data() {
+        return {
+            loading: false,
+            activeLink: '/',
+        };
+    },
+
+    watch: {
+        '$route': function(to) {
+            this.activeLink = to.path;
+        }
+    },
+
+
 
     setup() {
         return {
             showDrawerLeft: ref(false),
             expandDrawerLeft: ref(false),
-            showAdmin: ref(false)
+            showAdmin: ref(false),
         };
     },
 
     /* Setup App */
     mounted() {
-        /* Darkmode */
-        const darkMode = this.$q.dark.isActive;
+        const darkMode = false;         // this.$q.dark.isActive;
         this.$q.dark.set(darkMode);
-
-        /* Init CookieConsent */
         this.$cc.run(CookieConsentOptions);
-
-        /* ConsoleLogs */
-        // this.showLogs();
     },
 
-    methods: { 
+    methods: {
+
         async authUser() {
             try {
-                // Session Storage
-                // Bearer Token - OAuth2
-                this.$store.setSession();
                 this.$toast.load();
+                // Check Session Storage
+                // Bearer Token - OAuth2
+                this.$user.setSession();
                 const response = await userAuth();
-                this.$store.setUser(response.data);
+                this.$user.setUser(response.data);
                 this.$router.push('/dashboard');
                 this.$toast.success('Session started');
             } catch (error) {
+                this.$router.push('/login');
                 if(error.response) {
                     this.removeSession();
                     this.$toast.error(error.response)
                 }
-                this.$router.push('/login');
             } finally {
-                this.$toast.loaded();
+                this.$toast.done()
             }
+        },
+
+        goBackPanel() {
+            this.showAdmin = true;
+            this.$router.push('/backpanel');
+        },
+
+        goDashboard() {
+            this.showAdmin = false;
+            this.$router.push('/dashboard');
         },
 
         async logoutUser() {
@@ -148,13 +145,13 @@ export default {
             } catch (error) {
                 this.$toast.error(error.response ? error.response : error);
             } finally {
-                this.$toast.loaded();
+                this.$toast.done()
             }
         },
 
         removeSession() {
-            this.$store.removeToken();
-            this.$store.removeSession(this.$env.SESSION_NAME);
+            this.$user.removeToken();
+            this.$user.removeSession(this.$env.SESSION_NAME);
             this.$router.push('/');
         },
 
@@ -163,8 +160,9 @@ export default {
             console.log('Quasar', this.$q);
             console.log('Axios', this.$axios);
             console.log('ENV', this.$env);
-            console.log("Store", this.$store);
+            console.log('Store', this.$user);
             console.log('Toast', this.$toast);
+            console.log('Toast', this.$meta);
         }
     },
 };

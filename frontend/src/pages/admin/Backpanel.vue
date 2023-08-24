@@ -2,9 +2,13 @@
 
     <PageWrapper 
         title="Backpanel" 
-        :directory="directory"
         :rendering="rendering"
+        leftDrawer
     >
+        <template #leftDrawer>
+            <NavigationAdmin />
+        </template>
+
         <q-card class="my-card">
             <q-card-section>
                 <div class="text-h6">Verified Users:</div>
@@ -23,13 +27,14 @@
 
 <script>
 import { ref } from 'vue';
-import PageWrapper from 'components/PageWrapper.vue';
 import { loginBackpanel } from 'src/apis/admin.js';
+import PageWrapper from 'components/PageWrapper.vue';
+import NavigationAdmin from 'src/pages/layout/NavigationAdmin.vue';
 
 export default {
     name: 'AdminBackpanel',
     components: {
-        PageWrapper
+        PageWrapper, NavigationAdmin
     },
     setup() {
         return {
@@ -47,7 +52,7 @@ export default {
     methods: {
         async getBackpanelInfos() {
             try {
-                this.rendering = this.$toast.load();
+                this.rendering = true;
                 const response = await loginBackpanel();
                 this.infos = response.data;
                 this.$toast.success('Welcome to Backpanel.');

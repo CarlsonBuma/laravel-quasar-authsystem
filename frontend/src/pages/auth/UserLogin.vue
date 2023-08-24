@@ -1,16 +1,14 @@
 <template>
 
-    <PageWrapper :rendering="loading">
+    <PageWrapper class="q-mt-lg">
         <CardWrapper
-            :goBack="true"
             title="Login"
             iconHeader="verified_user"
+            goBack
         >
-            <!-- Login -->
             <FormWrapper
                 buttonText="Login"
                 buttonIcon="verified_user"
-                :loading="loading"
                 @submit="loginUser(login.email, login.password)"
             >
                 <q-input
@@ -35,36 +33,16 @@
                 <q-btn @click="$router.push('create-account')" flat class="col-12" label="Create an account" />
                 <q-btn @click="$router.push('terms-and-conditions')" flat class="col-12" label="Terms &amp; Conditions" />
             </div>
-
-            <!-- Testing: Verify & Reset Password -->
-            <!-- <div class="flex justify-center">
-                <q-btn color="primary" class="q-ma-lg" label="Verify" @click="$router.push({
-                    name: 'EmailVerificationRequest',
-                    params: {
-                        email: 'email@email.com',
-                        key: '123svdfs'
-                    }
-                })" />
-                <q-btn color="primary" class="q-ma-lg" label="Reset Password" @click="$router.push({
-                    name: 'PasswordSet',
-                    params: {
-                        email: 'email@email.com',
-                        key: '123svdfs'
-                    }
-                })" />
-            </div> -->
-
         </CardWrapper>
     </PageWrapper>
 
 </template>
 
 <script>
-import { ref } from 'vue';
+import { userLogin } from 'src/apis/auth.js';
 import PageWrapper from 'components/PageWrapper.vue';
 import CardWrapper from 'components/CardWrapper.vue';
 import FormWrapper from 'components/FormWrapper.vue';
-import { userLogin } from 'src/apis/auth.js';
 
 export default {
     name: 'UserLogin',
@@ -75,12 +53,6 @@ export default {
     emits: [
         'authorize'
     ],
-
-    setup() {
-        return {
-            loading: ref(false),
-        };
-    },
     
     data() {
         return {
@@ -95,16 +67,15 @@ export default {
         async loginUser(email, password) {
             try {
                 if(!password || !email) throw "Please enter credentials."
-                this.loading = true;
+                this.$toast.load();
                 const response = await userLogin(this.login);
-                this.$store.setToken(response.data.token);
+                // Login
+                this.$user.setToken(response.data.token);
                 this.$emit('authorize');
             } catch (error) {
-                const errorMessage = error.response ? error.response : error;
                 // Wrong Credentials && Email_Not_Verified
-                this.$toast.error(errorMessage);
+                this.$toast.error(error.response ? error.response : error);
             } finally {
-                this.loading = false;
                 this.login.password = '';
             }
         }

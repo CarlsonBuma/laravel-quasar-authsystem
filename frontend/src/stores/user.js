@@ -2,7 +2,7 @@
 import { defineStore } from "pinia";
 import axios from 'axios';
 
-const userAccess = defineStore({
+const storeUser = defineStore({
     id: "user",
     state: () => ({
         access: {
@@ -13,18 +13,15 @@ const userAccess = defineStore({
             id: 0,
             name: 'User',
             avatar: '',
-            email: ''
+            email: '',
         },
     }),
     actions: {
         setUser(user) {
-            // Credits
             this.user.id = user.id
             this.user.name = user.name
             this.user.avatar = user.avatar;
             this.user.email = user.email;
-
-            // User Auth
             this.access.user = true;
             this.access.admin = user.is_admin
         },
@@ -34,10 +31,13 @@ const userAccess = defineStore({
         },
 
         setSession() {
-            // Check Header Set
             const token = localStorage.getItem(process.env.SESSION_NAME);
             if(!token) throw 'No token set.';
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        },
+
+        removeAdmin() {
+            this.access.admin = false;
         },
 
         removeToken() {
@@ -52,14 +52,10 @@ const userAccess = defineStore({
                 id: 0,
                 name: 'User',
                 avatar: '',
-                email: ''
-            };
-        },
-
-        removeAdmin() {
-            this.access.admin = false;
+                email: '',
+            }
         },
     }
 });
 
-export default userAccess;
+export default storeUser;

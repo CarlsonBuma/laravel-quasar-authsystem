@@ -1,8 +1,10 @@
+'use strict';
+
 const routesGuest = [
     {
         path: '/',
         name: 'Welcome',
-        component: () => import('src/pages/guest/Welcome.vue'),
+        component: () => import('src/pages/Welcome.vue'),
     },
     
     // Legal & Compliance

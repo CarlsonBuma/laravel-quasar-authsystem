@@ -1,4 +1,5 @@
-import store from "src/stores/userAccess.js";
+'use strict';
+import userStore from "src/stores/user.js";
 
 const routesAuth = [
     {
@@ -11,7 +12,7 @@ const routesAuth = [
         component: () => import('src/pages/auth/PasswordResetRequest.vue'),
     }, {
         path: "/password-reset/:email/:key",
-        name: "PasswordSet",
+        name: "PasswordReset",
         component: () => import('src/pages/auth/PasswordReset.vue'),
     }, {
         path: "/email-verification-request/:email",
@@ -20,8 +21,8 @@ const routesAuth = [
     },
     {
         path: "/email-verification/:email/:key",
-        name: "EmailAccountVerification",
-        component: () => import('src/pages/auth/EmailAccountVerification.vue'),
+        name: "EmailVerification",
+        component: () => import('src/pages/auth/EmailVerification.vue'),
     }, {
         path: "/transfer-account/:email/:key/:transfer",
         name: "TransferAccount",
@@ -39,7 +40,7 @@ const routesAuth = [
         name: "UserProfile",
         component: () => import('src/pages/auth/UserProfile.vue'),
         beforeEnter: (to, from, next) => {
-            if (!store().access.user) next('/');
+            if (!userStore().access.user) next('/');
             else next();
         },
     },

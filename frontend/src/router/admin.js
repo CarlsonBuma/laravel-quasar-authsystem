@@ -1,4 +1,5 @@
-import store from "src/stores/userAccess.js";
+'use strict';
+import userStore from "src/stores/user.js";
 
 const routesBackpanel = [
     {
@@ -6,7 +7,7 @@ const routesBackpanel = [
         name: 'AdminBackpanel',
         component: () => import('src/pages/admin/Backpanel.vue'),
         beforeEnter: (to, from, next) => {
-            if (!store().access.admin) next({ name: "Welcome" });
+            if (!userStore().access.admin) next({ name: "Welcome" });
             else next();
         },
     },

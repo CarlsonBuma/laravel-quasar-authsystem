@@ -62,7 +62,6 @@
                     label="Dark"
                 />
             </q-item>
-            
         </div>
     </div>
     
@@ -72,7 +71,7 @@
 import { openURL } from 'quasar';
 
 export default {
-    name: 'NavFoot',
+    name: 'NavigationFoot',
     setup () {
         const forwardTo = (link) => {
             openURL(link);

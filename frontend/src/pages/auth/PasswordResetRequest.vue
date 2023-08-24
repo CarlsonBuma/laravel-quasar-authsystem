@@ -1,73 +1,63 @@
 <template>
-    <PageWrapper :rendering="loading">
+
+    <PageWrapper class="q-mt-lg">
         <CardWrapper
-            :goBack="true"
             title="Reset password"
             iconHeader="lock_clock"
-            note="*You will receive an email with the provided token. Please click the link, we sent to your email."
+            note="*You will receive an email with the provided token. Please click the link we sent to your email."
+            goBack
         >
-            <q-input
-                filled
-                type="email"
-                label="Enter your email"
-                v-model="email"
+            <FormWrapper
+                buttonText="Send Token"
+                buttonIcon="send"
+                @submit="resetPasswordRequest(email)"
             >
-                <template #prepend>
-                    <q-icon name="email" />
-                </template>
-            </q-input>
-            
-
-            <div class="flex items-center justify-end">
-                <ButtonSubmit 
-                    :loading="loading"
-                    buttonText="Send Token"
-                    @submit="resetPasswordRequest()"
-                    class="q-mt-md"
-                />
-            </div>
+                <q-input
+                    filled
+                    type="email"
+                    label="Enter email"
+                    v-model="email"
+                >
+                    <template #prepend>
+                        <q-icon name="email" />
+                    </template>
+                </q-input>
+            </FormWrapper>
         </CardWrapper>
     </PageWrapper>
+
 </template>
 
 <script>
-import { ref } from 'vue';
+import { passwordResetRequest } from 'src/apis/auth.js';
 import PageWrapper from 'components/PageWrapper.vue';
 import CardWrapper from 'components/CardWrapper.vue';
-import ButtonSubmit from 'src/components/ButtonSubmit.vue';
-import { passwordResetRequest } from 'src/apis/auth.js';
+import FormWrapper from 'components/FormWrapper.vue';
 
 export default {
-    name: 'EmailVerificationRequest',
+    name: 'PasswordReset',
     components: {
-        PageWrapper, CardWrapper, ButtonSubmit
+        PageWrapper, CardWrapper, FormWrapper
     },
-    setup() {
-        return {
-            loading: ref(false),
-        };
-    },
+
     data() {
         return {
             email: this.$route.params.email,
         };
     },
+
     methods: {
-        /**
-         * Send Email Verification to User
-         */
-        async resetPasswordRequest() {
+        async resetPasswordRequest(email) {
             try {
-                if(!this.email) throw 'Please enter your email.'
-                this.loading = true;
-                const response = await passwordResetRequest(this.email);
+                if(!email) throw 'Please enter your email.'
+                this.$toast.load();
+                const response = await passwordResetRequest(email);
                 this.$toast.success(response.data.message);
                 this.$router.push('/')
             } catch (error) {
-                const errorMessage = error.response ? error.response : error
-                this.$toast.error(errorMessage);
+                this.$toast.error(error.response ? error.response : error);
             } finally {
-                this.loading = false;
+                this.$toast.done();
             }
         }
     }

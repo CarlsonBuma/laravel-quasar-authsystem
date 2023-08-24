@@ -1,6 +1,6 @@
 <template>
 
-    <PageWrapper :rendering="loading">
+    <PageWrapper class="q-mt-lg">
         <CardWrapper
             :goBack="true"
             title="Create account"
@@ -11,8 +11,7 @@
             <FormWrapper
                 buttonText="Create account"
                 buttonIcon="admin_panel_settings"
-                :loading="loading"
-                @submit="registerUser()"
+                @submit="registerUser(user.name, user.email, user.agreed)"
             >
                 <!-- Username -->
                 <q-input
@@ -85,30 +84,28 @@ export default {
         };
     },
     methods: {
-        async registerUser() {
+        async registerUser(name, email, agreed) {
             try {
                 // Validate
-                if(!this.user.name) throw 'Please enter a name.';
-                if (!this.regRulesEmail.test(this.user.email)) throw 'No valid email.';
-                if (!this.user.agreed) throw 'Please agree with our Terms & Conditions.';
-
+                if(!name) throw 'Please enter a name.';
+                else if (!this.regRulesEmail.test(email)) throw 'No valid email.';
+                else if (!agreed) throw 'Please agree with our Terms & Conditions.';
                 // Create User
-                this.loading = true;
-                const response = await createAccount(this.user);
+                this.$toast.load();
+                const response = await createAccount(name, email, agreed);
                 this.$toast.success(response.data.message);
-                this.user.agreed = false;
-
                 // Redirect User to Verify Email
                 this.$router.push({
                     name: 'EmailVerificationRequest', 
                     params: { 
-                        email: this.user.email,
+                        email: email,
                     }
                 });
             } catch (error) {
                 this.$toast.error(error.response ? error.response : error);
             } finally {
-                this.loading = false;
+                this.$toast.done();
+                this.user.agreed = false;
             }
         },
     }

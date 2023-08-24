@@ -6,6 +6,10 @@ main {
     z-index: 9998;
 }
 
+#app-content {
+    background: rgb(231, 231, 231);
+}
+
 .border-left {
     border-left-style: solid;
 }
@@ -19,18 +23,18 @@ main {
 }
 
 .background-dark {
-    background-color: rgba(240, 240, 240, 0.1);
+    background-color: rgb(36, 36, 36) !important;
+}
+
+.bg-header-bright-mode {
+    background: linear-gradient(#8f00ff 0%, #444bff);
 }
 
 /*
  * Quasar - Components
  */
-.q-drawer {
-    z-index: 9999 !important;
-}
-
 .toaster-container {
-    margin-top: 72px;
+    margin-top: 15px;
 }
 
 .q-fab__actions {
@@ -41,7 +45,6 @@ main {
  * Helpers
  */
 ._text-break {
-    word-break: break-all;
     overflow: auto;
     white-space: pre-wrap;
 }
@@ -50,6 +53,10 @@ main {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.__text-escape {
+    overflow-wrap: break-word;
 }
 
 /*

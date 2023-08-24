@@ -1,4 +1,5 @@
-import store from "src/stores/userAccess.js";
+'use strict';
+import userStore from "src/stores/user.js";
 
 const routesUser = [
     {
@@ -6,7 +7,7 @@ const routesUser = [
         name: 'Dashboard',
         component: () => import('src/pages/user/Dashboard.vue'),
         beforeEnter: (to, from, next) => {
-            if (!store().access.user) next({ name: "Welcome" });
+            if (!userStore().access.user) next({ name: "Welcome" });
             else next();
         },
     },
