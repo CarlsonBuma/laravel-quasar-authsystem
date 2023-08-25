@@ -13,7 +13,6 @@
 
 ## Files
 /backend/storage/*.key
-/backend/storage/avatars
 /backend/composer.lock
 /backend/.env
 /backend/.env.backup

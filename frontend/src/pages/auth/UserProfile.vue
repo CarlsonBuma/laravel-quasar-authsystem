@@ -1,76 +1,73 @@
-<style lang="sass" scoped>
-.width-adjust
-    width: 100%
-    max-width: 400px
-</style>
-
 <template>
 
     <PageWrapper title="My Profile" goBack>
-        <div class="row items-start justify-center">
-            <div class="width-adjust q-ma-sm">
-                <CardWrapper cardWidth="400px" allowHeader allowActions >
-                    <template #head>
-                        <q-icon
-                            v-if="! $user.user.avatar"
-                            name="account_circle"
-                            class="col q-ma-md" 
-                            size="220px" 
-                        />
-                        <q-img
-                            v-else
-                            :src="$user.user.avatar"
-                            alt="user-avatar"
-                            class="q-ma-xs"
-                            :ratio="1"
-                            fit="fill" 
-                            loading="eager"
-                        />
-                        <input
-                            type="file"
-                            name="image"
-                            ref="file"
-                            accept="image/*"
-                            @change="(event) => getImage(event)"
-                            hidden
-                        />
-                    </template>
+        <div class="flex justify-center q-mt-md">
+            <CardWrapper
+                cardWidth="400px"
+                class="q-ma-sm"
+                title="Credentials"
+                :allowHeader="true"
+                :allowActions="true"
+            >
+                <template #head>
+                    <q-icon
+                        v-if="! $user.user.avatar"
+                        name="account_circle"
+                        class="col q-ma-md" 
+                        size="220px" 
+                    />
+                    <q-img
+                        v-else
+                        :src="$user.user.avatar"
+                        alt="userAvatar"
+                        class="col q-ma-xs"
+                    />
+                    <input
+                        type="file"
+                        name="image"
+                        ref="file"
+                        accept="image/*"
+                        @change="(event) => getImage(event)"
+                        hidden
+                    />
+                </template>
 
-                    <!-- Action -->
-                    <template #actions>
-                        <q-btn
-                            @click="$refs.file.click()" 
-                            flat 
-                            round 
-                            color="primary"
-                            icon="restart_alt" 
-                        />
-                        <q-btn 
-                            @click="removeImage()"
-                            flat 
-                            round 
-                            color="red" 
-                            icon="delete" 
-                        />
-                        <q-btn
-                            @click="saveAvatar()" 
-                            flat 
-                            round 
-                            color="secondary" 
-                            icon="save" />
-                    </template>
-                </CardWrapper>
+                <!-- Action -->
+                <template #actions>
+                    <q-btn
+                        @click="$refs.file.click()" 
+                        flat 
+                        round 
+                        color="primary"
+                        icon="restart_alt" 
+                    />
+                    <q-btn 
+                        @click="removeImage()"
+                        flat 
+                        round 
+                        color="red" 
+                        icon="delete" 
+                    />
+                    <q-btn
+                        @click="saveAvatar()" 
+                        flat 
+                        round 
+                        color="secondary" 
+                        icon="save" />
+                </template>
 
                 <!-- Credentials -->
-                <CardWrapper title="Credentials" cardWidth="400px" class="q-mt-md" >
-                    <p><b>ID:</b>&nbsp;{{ $user.user.id }}</p>
-                    <p><b>Username:</b>&nbsp;{{ $user.user.name }}</p>
-                    <p><b>Email:</b>&nbsp;{{ $user.user.email }}</p>
-                </CardWrapper>
-            </div>
+                <p><b>ID:</b>&nbsp;{{ $user.user.id }}</p>
+                <p><b>Username:</b>&nbsp;{{ $user.user.name }}</p>
+                <p><b>Email:</b>&nbsp;{{ $user.user.email }}</p>
+            </CardWrapper>
 
             <!-- UserName -->
-            <CardWrapper cardWidth="400px" class="q-ma-sm" title="Change Username">
+            <CardWrapper
+                cardWidth="400px"
+                class="q-ma-sm"
+                title="Change Username"
+            >
                 <!-- Name -->
                 <FormWrapper
                     buttonText="Change name"
@@ -310,11 +307,11 @@ export default {
         /** User Avatar */
         async saveAvatar() {
             if(!this.userAvatar.image && !this.userAvatar.deleteAvatar ) return;
+            this.$toast.load();
             try {
                 const formData = new FormData;
                 formData.append("avatar", this.userAvatar.image);
                 formData.append("delete", this.userAvatar.deleteAvatar ? '1' : '0');
-                this.$toast.load();
                 const response = await changeAvatar(formData);
                 this.$toast.success(response.data.message);
                 this.userAvatar.image = null;
