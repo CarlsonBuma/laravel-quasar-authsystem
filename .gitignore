@@ -5,6 +5,7 @@
 /backend/public/avatar
 /backend/public/hot
 /backend/public/storage
+/backend/storage/app/avatars
 /backend/vendor
 
 ## Folders Local Environment
@@ -13,7 +14,6 @@
 /backend/.vscode
 
 ## Files
-/backend/storage/app/avatars
 /backend/storage/*.key
 /backend/composer.lock
 /backend/.env
