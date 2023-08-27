@@ -2,6 +2,7 @@
 ## Folders
 /backend/node_modules
 /backend/public/build
+/backend/public/avatar
 /backend/public/hot
 /backend/public/storage
 /backend/vendor
@@ -12,6 +13,7 @@
 /backend/.vscode
 
 ## Files
+/backend/storage/app/avatars
 /backend/storage/*.key
 /backend/composer.lock
 /backend/.env

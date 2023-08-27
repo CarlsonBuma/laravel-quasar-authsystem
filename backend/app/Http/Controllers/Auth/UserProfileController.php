@@ -40,30 +40,20 @@ class UserProfileController extends Controller
             $userAvatar = $currentUser->avatar;
 
             // Delete Avatar
-            if($data['delete']) {
-                if($userAvatar) {
-                    Storage::disk('avatar')->delete($userAvatar);
-                    $currentUser->avatar = null;
-                    $currentUser->save();
-                }
-            }
-
-            // Update Image
-            else {
-                if(isset($data['avatar'])) {
-                    
-                    // Module Image
-                    $fileExtension = $request->file('avatar')->extension();
-                    $imageName = $userID . '-' . Str::random(32) . '.' . $fileExtension;
+            if($data['delete'] && $userAvatar) {
+                Storage::disk('avatar')->delete($userAvatar);
+                $currentUser->avatar = null;
+                $currentUser->save();
+            } else if ($data['avatar']) {   
+                // Change Image: Existing vs. non existing
+                $fileExtension = $request->file('avatar')->extension();
+                $imageName = $userID . '-' . Str::random(32) . '.' . $fileExtension;
+                if($userAvatar) Storage::disk('avatar')->delete($userAvatar);       
+                Storage::putFileAs('avatars', $request->file('avatar'), $imageName);
                 
-                    // Change Image: Existing vs. non existing
-                    if($userAvatar) Storage::disk('avatar')->delete($userAvatar);       
-                    Storage::putFileAs('avatars', $request->file('avatar'), $imageName);
-                    
-                    // Save in DB
-                    $currentUser->avatar = $imageName;
-                    $currentUser->save();
-                }
+                // Save in DB
+                $currentUser->avatar = $imageName;
+                $currentUser->save();
             }
         } catch (Exception $e) {
             return response()->json([
