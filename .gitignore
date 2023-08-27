@@ -1,11 +1,11 @@
 # Backend
 ## Folders
+/backend/storage/app/avatars
 /backend/node_modules
 /backend/public/build
 /backend/public/avatar
 /backend/public/hot
 /backend/public/storage
-/backend/storage/app/avatars
 /backend/vendor
 
 ## Folders Local Environment
