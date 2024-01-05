@@ -21,10 +21,10 @@ const routesGuest = [
         name: "TermsConditions",
         component: () => import('src/pages/guest/compliance/TermsConditions.vue'),
     }, {
-        path: "/sitemap",
-        name: "Sitemap",
-        component: () => import('src/pages/guest/compliance/Sitemap.vue'),
-    },
+        path: "/latest-releases",
+        name: "WebReleases",
+        component: () => import('src/pages/guest/WebReleases.vue'),
+    }
 ];
 
 export default routesGuest;

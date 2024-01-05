@@ -32,7 +32,6 @@ class EmailVerificationController extends Controller
                 'email' => ['required', 'string', 'email', 'max:255'],
             ]);
 
-
             $user = User::where('email', $data['email'])->first();
             if ($user && !$user->email_verified_at) {
                 DB::beginTransaction();

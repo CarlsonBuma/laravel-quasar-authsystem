@@ -10,6 +10,14 @@ const routesBackpanel = [
             if (!userStore().access.admin) next({ name: "Welcome" });
             else next();
         },
+    }, {
+        path: '/releasemanagement',
+        name: 'ReleaseManagement',
+        component: () => import('src/pages/admin/ReleaseManagement.vue'),
+        beforeEnter: (to, from, next) => {
+            if (!userStore().access.admin) next('/');
+            else next();
+        },
     },
 ];
 

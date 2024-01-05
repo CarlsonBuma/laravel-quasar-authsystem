@@ -1,5 +1,6 @@
 'use strict';
 import { defineStore } from "pinia";
+import { LocalStorage } from 'quasar'
 import axios from 'axios';
 
 const storeUser = defineStore({
@@ -27,21 +28,17 @@ const storeUser = defineStore({
         },
 
         setToken(sessionToken) {
-            localStorage.setItem(process.env.SESSION_NAME, sessionToken);
+            LocalStorage.set(process.env.SESSION_NAME, sessionToken)
         },
 
         setSession() {
-            const token = localStorage.getItem(process.env.SESSION_NAME);
+            const token = LocalStorage.getItem(process.env.SESSION_NAME);
             if(!token) throw 'No token set.';
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         },
 
-        removeAdmin() {
-            this.access.admin = false;
-        },
-
         removeToken() {
-            localStorage.removeItem(process.env.SESSION_NAME);
+            LocalStorage.remove(process.env.SESSION_NAME)
         },
 
         removeSession() {
@@ -54,6 +51,10 @@ const storeUser = defineStore({
                 avatar: '',
                 email: '',
             }
+        },
+
+        removeAdmin() {
+            this.access.admin = false;
         },
     }
 });

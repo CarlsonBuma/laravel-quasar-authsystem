@@ -7,12 +7,12 @@ use App\Models\User;
 use App\Modules\Password;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Controllers\Controller;
 
-class UserProfileController extends Controller
+class UserAccountController extends Controller
 {
     /**
      ** Change Avatar
@@ -41,15 +41,15 @@ class UserProfileController extends Controller
 
             // Delete Avatar
             if($data['delete'] && $userAvatar) {
-                Storage::disk('avatar')->delete($userAvatar);
+                Storage::disk('userAvatar')->delete($userAvatar);
                 $currentUser->avatar = null;
                 $currentUser->save();
             } else if ($data['avatar']) {   
                 // Change Image: Existing vs. non existing
                 $fileExtension = $request->file('avatar')->extension();
                 $imageName = $userID . '-' . Str::random(32) . '.' . $fileExtension;
-                if($userAvatar) Storage::disk('avatar')->delete($userAvatar);       
-                Storage::putFileAs('avatars', $request->file('avatar'), $imageName);
+                if($userAvatar) Storage::disk('userAvatar')->delete($userAvatar);       
+                Storage::putFileAs('public/userAvatar', $request->file('avatar'), $imageName);
                 
                 // Save in DB
                 $currentUser->avatar = $imageName;
@@ -62,7 +62,9 @@ class UserProfileController extends Controller
         }
 
         return response()->json([
-            'message' => 'Success! Your avatar has been changed.',
+            'message' => $data['delete']
+                ? 'Your avatar has been deleted.'
+                : 'Your avatar has been updated.',
         ], 200);
     }
 
@@ -153,7 +155,6 @@ class UserProfileController extends Controller
     public function deleteAccount(Request $request)
     {
         try {
-
             $data = $request->validate([
                 'password' => ['required', 'string', 'max:255'],
             ]);
@@ -163,12 +164,16 @@ class UserProfileController extends Controller
 
             // Check Current Password
             $user = User::find($userID);
-            if(!Hash::check($password, $user->password)) throw new Exception('Ups, the given password is incorrect.');
-            
-            // Remove Avatar
+            if(!Hash::check($password, $user->password)) throw new Exception('The given password is incorrect.');
+
+            // Remove Images
+            // User Avatar
             $userAvatar = $user->avatar;
-            if($userAvatar) {
-                Storage::disk('avatar')->delete($userAvatar);
+            if($userAvatar) Storage::disk('userAvatar')->delete($userAvatar);
+            // User Entity Avatars
+            foreach($user->has_entities()->get() as $entity) {
+                $entityAvatar = $entity->avatar;
+                if($entityAvatar) Storage::disk('entityAvatar')->delete($entityAvatar);
             }
 
             // Delete Userdata

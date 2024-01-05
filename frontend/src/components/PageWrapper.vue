@@ -44,7 +44,7 @@
             
             <!-- Content -->
             <div v-if="rendering" class="flex justify-center q-mt-md">
-                <q-spinner-bars size="74px" color="purple" />
+                <q-spinner-bars size="74px" color="primary" />
             </div>
             <div v-else class="flex justify-center w-100 q-pt-md q-pl-xs q-pl-md-md q-pr-xs q-pr-md-md q-pb-xl" >
                 <slot />

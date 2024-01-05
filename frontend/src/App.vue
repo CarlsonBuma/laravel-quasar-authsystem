@@ -86,8 +86,6 @@ export default {
         }
     },
 
-
-
     setup() {
         return {
             showDrawerLeft: ref(false),
@@ -105,6 +103,16 @@ export default {
 
     methods: {
 
+        goBackPanel() {
+            this.showAdmin = true;
+            this.$router.push('/backpanel');
+        },
+
+        goDashboard() {
+            this.showAdmin = false;
+            this.$router.push('/dashboard');
+        },
+
         async authUser() {
             try {
                 this.$toast.load();
@@ -113,8 +121,8 @@ export default {
                 this.$user.setSession();
                 const response = await userAuth();
                 this.$user.setUser(response.data);
-                this.$router.push('/dashboard');
                 this.$toast.success('Session started');
+                this.$router.push('/dashboard');
             } catch (error) {
                 this.$router.push('/login');
                 if(error.response) {
@@ -124,16 +132,6 @@ export default {
             } finally {
                 this.$toast.done()
             }
-        },
-
-        goBackPanel() {
-            this.showAdmin = true;
-            this.$router.push('/backpanel');
-        },
-
-        goDashboard() {
-            this.showAdmin = false;
-            this.$router.push('/dashboard');
         },
 
         async logoutUser() {

@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\UserAuthController;
-use App\Http\Controllers\Auth\UserProfileController;
+use App\Http\Controllers\Auth\UserAccountController;
 use App\Http\Controllers\Auth\CreateAccountController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\TransferAccountController;
@@ -73,12 +73,12 @@ Route::middleware(['auth:api', 'email_verified'])->group(function () {
     Route::post('/logout', [UserAuthController::class, 'logoutUser'])
         ->name('logout'); 
         
-    // User Profile
-    Route::post('/user-change-avatar', [UserProfileController::class, 'changeAvatar'])
+    // User Account
+    Route::post('/user-change-avatar', [UserAccountController::class, 'changeAvatar'])
         ->name('user.change.avatar');
-    Route::post('/user-change-name', [UserProfileController::class, 'changeName'])
+    Route::post('/user-change-name', [UserAccountController::class, 'changeName'])
         ->name('user.change.name');
-    Route::post('/user-change-password', [UserProfileController::class, 'changePassword'])
+    Route::post('/user-change-password', [UserAccountController::class, 'changePassword'])
         ->name('user.change.password');
     
     // Transfer Account Request 
@@ -87,6 +87,6 @@ Route::middleware(['auth:api', 'email_verified'])->group(function () {
         ->name('user.transfer.account');
     
     // Delete User
-    Route::post('/user-delete-account', [UserProfileController::class, 'deleteAccount'])
+    Route::post('/user-delete-account', [UserAccountController::class, 'deleteAccount'])
         ->name('user.delete.account');
 });

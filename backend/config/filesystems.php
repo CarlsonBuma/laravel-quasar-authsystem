@@ -44,10 +44,10 @@ return [
             'throw' => false,
         ],
 
-        'avatar' => [
+        'userAvatar' => [
             'driver' => 'local',
-            'root' => storage_path('app/avatars'),
-            'url' => env('APP_URL').'/avatars',
+            'root' => storage_path('app/public/userAvatar'),
+            'url' => env('APP_URL').'/storage/userAvatar',
             'visibility' => 'public',
             'throw' => false,
         ],

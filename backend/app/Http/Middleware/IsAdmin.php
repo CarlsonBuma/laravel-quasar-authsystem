@@ -13,7 +13,8 @@ class IsAdmin
     {   
         try {
             $user = Auth::user();
-            if($user->is_admin->user_id) return $next($request); 
+            if(!$user) throw new Exception('Not verified.');
+            else if($user->is_admin->user_id) return $next($request); 
             throw new Exception('Ups, no access to our backpanel.');
         } catch (Exception $e) {
             return response()->json([

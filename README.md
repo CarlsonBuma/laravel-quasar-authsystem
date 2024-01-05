@@ -1,62 +1,54 @@
 # System Overview
-Full Auth System - v.4.0, 24.08.2023 
- - by Carlson, 08.01.2023
+Full Auth System - v.4.1, 05.01.2024 
+ - by Carlson Patrick, 08.01.2023
 
-Public Git Repo: 
-https://github.com/CarlsonBuma/Laravel-Quasar-Authsystem
+Laravel 10 Framework:
+https://laravel.com/docs/10.x
 
-Youtube Tutorial:
-https://www.youtube.com/watch?v=Jdg9x3BDT38&t=1s
+Quasar Framework:
+https://quasar.dev/docs
 
-Clone Repository
-git clone https://github.com/CarlsonBuma/Laravel-Quasar-Authsystem.git
+Youtube Tutorials:
+https://www.youtube.com/watch?v=Jdg9x3BDT38&t
+
+Follow us:
+https://www.linkedin.com/in/carlson-patrick-239642170/
+https://ch.linkedin.com/company/gigup-solutions
+
 
 ## Current Bugs / Improvements
- > Please let me know!
+ > Please let us know!
  > hello@gigup.ch
 
-## System Overview - Frontend (Vue3) & Backend (Laravel 10)
- - Globals Backend
-    - Laravel Middleware: Laravel Passport
- - Globals Frontend
-    - Cookie Consent (cookieConsent.js)
-    - Request Handling (Toast.js)
- - Userauth
-    - Login, Logout
-    - Register + Email verification
-    - Reset password
-    - Transfer Account
-    - User Profile
-        - Change Avatar
-        - Change Name
-        - Change Password
-        - Transfer Account (Change email)
-        - Delete Account
+## Feature Overview
+   see docs
 
 ## Folder Structure
+ - docs
  - backend
     - see Readme.md
  - frontend
     - see Readme.md
 
-# Architecture
+# System Requirements
 ## Environment 
- - php 8.1
+ - php 8.2 (backend)
      - Xdebug from Zend Engine v.4.1
      - composer v.2.4.1
- - node.js 18.7
- - docker 20.10
+ - node.js 18.7 (frontend)
+ - docker 20.10 (database)
      - docker-desktop
      - postgresql, pgadmin4
- - powershell
+ - powershell (start environment)
+ - draw.io (documentations & modeling)
 
 ## Frameworks
  - backend: 
      - Laravel 10
         - Auth: Laravel Passport
  - frontend: 
-     - Vue 3
-     - Quasar, 2.12.0
+     - VueJS, 
+     - Quasar 2.12.0
      - Axios
      - Pinia
 

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class UserAuthController extends Controller
 {
@@ -24,7 +25,7 @@ class UserAuthController extends Controller
         $user = Auth::user();
         $isAdmin = Auth::user()->is_admin;
         $avatarPath = $user->avatar
-            ? URL::to('/avatar') . '/' . $user->avatar
+            ? URL::to(Storage::url('userAvatar')) . '/' . $user->avatar
             : '';
         
         return response()->json([

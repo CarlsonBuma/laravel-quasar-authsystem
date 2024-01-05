@@ -22,7 +22,7 @@
             <q-tabs label="About" vertical inline-label align="left">
                 <q-route-tab to="/impressum" label="Impressum" />
                 <q-route-tab to="/terms-and-conditions" label="Rechtliches" />
-                <q-route-tab to="/sitemap" label="Sitemap" />
+                <q-route-tab to="/latest-releases" label="Latest Releases" />
             </q-tabs>
         </div>
         <div class="col-12 col-md-3 q-pa-lg text-center">

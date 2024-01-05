@@ -15,4 +15,8 @@ class Admin extends Model
         'user_id',
         'role',
     ];
+
+    public function belongs_to_user() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

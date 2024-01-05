@@ -99,8 +99,8 @@ class TransferAccountController extends Controller
             $verifyPassword = new Password;
             if(!$verifyPassword->verifyPassword($password)) throw new Exception($verifyPassword->error);
 
-            // Unique Email
-            if(User::where('email', $transfer)->first()) throw new Exception('Email already exists.');
+            // Check Unique Email
+            if(User::where('email', $transfer)->first()) throw new Exception('Email alredy exists.');
 
             // Validate Signature
             if (!$request->hasValidSignature()) throw new Exception('Link has been expired.');
