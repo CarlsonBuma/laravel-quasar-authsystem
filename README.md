@@ -2,18 +2,16 @@
 Full Auth System - v.4.1, 05.01.2024 
  - by Carlson Patrick, 08.01.2023
 
-Laravel 10 Framework:
-https://laravel.com/docs/10.x
-
-Quasar Framework:
-https://quasar.dev/docs
+Laravel 10 Framework: https://laravel.com/docs/10.x
+Quasar Framework: https://quasar.dev/docs
 
 Youtube Tutorials:
-https://www.youtube.com/watch?v=Jdg9x3BDT38&t
+ - Setup Repo: https://youtu.be/Jdg9x3BDT38
+ - Develop your own app: https://youtu.be/H7Imh3a9UXI
 
 Follow us:
-https://www.linkedin.com/in/carlson-patrick-239642170/
-https://ch.linkedin.com/company/gigup-solutions
+ - https://www.linkedin.com/in/carlson-patrick-239642170/
+ - https://ch.linkedin.com/company/gigup-solutions
 
 
 ## Current Bugs / Improvements
@@ -21,7 +19,7 @@ https://ch.linkedin.com/company/gigup-solutions
  > hello@gigup.ch
 
 ## Feature Overview
-   see docs
+ - see docs
 
 ## Folder Structure
  - docs
