@@ -45,9 +45,8 @@ Follow us:
  - backend: 
      - Laravel 10
         - Auth: Laravel Passport
- - frontend: 
-     - VueJS, 
-     - Quasar 2.12.0
+ - frontend:
+     - Quasar 2.12.0, VueJS Framework
      - Axios
      - Pinia
 
