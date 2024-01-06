@@ -2,8 +2,9 @@
 Full Auth System - v.4.1, 05.01.2024 
  - by Carlson Patrick, 08.01.2023
 
-Laravel 10 Framework: https://laravel.com/docs/10.x
-Quasar Framework: https://quasar.dev/docs
+Frameworks:
+ - Laravel 10 Framework: https://laravel.com/docs/10.x
+ - Quasar Framework: https://quasar.dev/docs
 
 Youtube Tutorials:
  - Setup Repo: https://youtu.be/Jdg9x3BDT38
