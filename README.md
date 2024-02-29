@@ -15,10 +15,13 @@ Follow us:
  - https://ch.linkedin.com/company/gigup-solutions
 
 
-## Security Check
+## Security / Dependencies Check
    - go "/frontend": 
       - npm audit
       - npm audit fix --force
+   - go "/backend": 
+      - composer outdated
+      - composer update
 
 ## Current Bugs / Improvements
  > Please let us know!
