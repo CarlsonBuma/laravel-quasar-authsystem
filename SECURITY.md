@@ -3,7 +3,7 @@
 ## Supported Versions
 
 Newest Version: 4,
-Latest update: 15.01.2024
+Latest update: 29.02.2024
 
 | Version | Supported          |
 | ------- | ------------------ |

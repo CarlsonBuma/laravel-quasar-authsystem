@@ -3,7 +3,6 @@
  - composer install
  - create .env file
  - setup .env file
-    - 
 
 ## Migrage Database
  - php artisan migrate
@@ -24,7 +23,6 @@
 ## Login
   - Usercredits: admin@admin.com
   - Password: admin
-
 
 # System Requirements
 ## System Modules
@@ -54,7 +52,6 @@
  * Bluemail:    Sending & Tracking emails
  * Github:      Code Management
  * Localhost:   Server & Domain
-
 
  # Deployment
   - .env set to production

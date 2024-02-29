@@ -15,6 +15,11 @@ Follow us:
  - https://ch.linkedin.com/company/gigup-solutions
 
 
+## Security Check
+   - go "/frontend": 
+      - npm audit
+      - npm audit fix --force
+
 ## Current Bugs / Improvements
  > Please let us know!
  > hello@gigup.ch
