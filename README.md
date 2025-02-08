@@ -1,3 +1,6 @@
+# Outdated! 
+New Template: https://github.com/CarlsonBuma/laravel-quasar-template.git
+
 # System Overview
 Full Auth System - v.4.1, 05.01.2024 
  - by Carlson Patrick, 08.01.2023
