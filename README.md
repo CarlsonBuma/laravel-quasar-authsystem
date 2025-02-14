@@ -1,5 +1,5 @@
 # Outdated! 
-New Template: https://github.com/CarlsonBuma/laravel-quasar-template.git
+New Template: [https://github.com/CarlsonBuma/laravel-quasar-template.git](https://github.com/CarlsonBuma/app-template.git)
 
 # System Overview
 Full Auth System - v.4.1, 05.01.2024 
